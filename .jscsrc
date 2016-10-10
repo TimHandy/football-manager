@@ -1,0 +1,5 @@
+{
+     "validateIndentation": "\t",
+     "requireSemicolons": false,
+     "maximumLineLength": 150,
+}
