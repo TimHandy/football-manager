@@ -77,7 +77,7 @@ function printTeams( TeamA, TeamB ) {
 }
 
 function startGame() {
-	const gameStats = {
+	const gameStats = {			//dont do this!!!!
 		date: 'current date',	// Date and time right now
 		Players: playersOnPitch,  // Well, a copy of playersOnPitch
 		TeamAScore: 0,
@@ -147,3 +147,18 @@ displayLeagueStats();	// Display current player league stats
 updateMoniesOwed();		// Update a money owed by the player
 
 newSeason();			// Archive off this season's data to another file and wipe this seasons data
+
+
+
+
+// could be stored in localstorage, on the device.
+//
+// learn testing
+//
+// mocha
+//
+// don't do assertion libraries (eg. chai) yet!
+//
+// use the node.js built in assert library. require asserts.
+//
+// testing math.random. pass in a seed value. google seeeded random generator.
