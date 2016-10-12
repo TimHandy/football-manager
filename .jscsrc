@@ -1,7 +1,7 @@
 {
-  "preset": "airbnb"
-, "preset": "jquery"
-,  "validateIndentation": "\t"
+  /*"preset": "airbnb"
+, "preset": "jquery"*/
+  "validateIndentation": "\t"
 , "requireSemicolons": false
 , "maximumLineLength": 150
 , "maximumNumberOfLines": 500
@@ -13,7 +13,6 @@
 , "disallowTrailingWhitespace": true
 , "requireCapitalizedConstructors": true
 , "requireSpacesInsideObjectBrackets": "all"
-, "requireSpacesInsideArrayBrackets": "all"
 , "requireSpaceBeforeBinaryOperators": [ "+", "-", "/", "*", "=", "==", "===", "!=", "!==" ]
 , "requireSpaceAfterBinaryOperators": [ "+", "-", "/", "*", "=", "==", "===", "!=", "!==" ]
 , "requireSpaceAfterKeywords": [ "if", "else", "for", "while", "do", "switch", "try", "catch" ],
@@ -54,10 +53,6 @@
   "requireSpaceBeforeBlockStatements": true,
   "requireSpaceBeforeObjectValues": true,
   "requireSpaceBetweenArguments": true,
-  "requireSpacesInAnonymousFunctionExpression": {
-    "beforeOpeningCurlyBrace": true,
-    "beforeOpeningRoundBrace": true
-  },
   "requireSpacesInConditionalExpression": true,
   "requireSpacesInForStatement": true,
   "requireSpacesInFunction": {
