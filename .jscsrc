@@ -35,7 +35,7 @@
   "disallowMixedSpacesAndTabs": true,
   "disallowYodaConditions": true,
   "requireCamelCaseOrUpperCaseIdentifiers": true,
-  "requireCapitalizedComments": true,
+  "requireCapitalizedComments": false,
   "requireDollarBeforejQueryAssignment": true,
   "requireDotNotation": true,
   "requireLineBreakAfterVariableAssignment": true,

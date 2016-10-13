@@ -7,44 +7,8 @@ let teamB = []
 
 const demoPlayers = ['Tim Handy', 'Jade Andrews', 'Chris Rollins', 'Leah Andrews', 'Karl Cedeira', 'Misako Cedeira', 'David Beckham', 'Diego Maradonna', 'Jane Doe', 'Damo Connop', 'Sarah Connop']
 
-// Save data to localStorage
-function saveData() {
-	let str = JSON.stringify(footballData)
-	localStorage.setItem("footballData", str)
-	console.log( JSON.stringify(footballData, null, 2) )
-}
 
-// Retrieve data from localStorage
-function getData() {
-	let str = localStorage.getItem("footballData")
-	footballData = JSON.parse(str)
-	if (!footballData) {
-		footballData = {
-			players: [],
-			games: []
-		}
-	}
-}
-
-// Just for testing
-function genTestData() {
-	newPlayer('Tim', 'Handy', 'tim@tim.com')
-	newPlayer('Jade', 'Andrews', 'jade@jade.com')
-	newPlayer('Sarah', 'Connop', 'sarah@sarah.com')
-	newPlayer('Jane', 'Doe', 'jane@jane.com')
-	newPlayer('Chris', 'Rollins', 'chris@chris.com')
-	newPlayer('Diego', 'Maradonna', 'diego@diego.com')
-	newPlayer('David', 'Beckham', 'becks@becks.com')
-	newPlayer('Misako', 'Cedeira', 'misako@mis.com')
-	newPlayer('Karl', 'Cedeira', 'karl@cedeira.com')
-	newPlayer('Leah', 'Andrews', 'leah@andrews.com')
-	newPlayer('Damo', 'Connop', 'damo@wolves.com')
-
-	generateTeams(demoPlayers, function () {
-		generateGame(teamA, teamB)
-	})	// not people from players! these are just fake names
-}
-
+// Helper functions ############################################################
 function shuffle(array) {
 	//Fisher-Yates (aka Knuth) shuffle
 	// Used like so:
@@ -70,6 +34,87 @@ function shuffle(array) {
   return array;
 }
 
+function findPlayerByName(firstName, lastName) {
+	return footballData.players.find(player => player.firstName === firstName && player.lastName === lastName)
+}
+
+function findPlayersBySkillLevel(skill) {
+	return footballData.players.filter(player => player.skillLevel === skill)
+}
+
+function justNames(playersArr) {
+	return playersArr.map(function(player) {
+		return player.firstName + " " + player.lastName
+	})
+}
+
+function whichTeam(firstName, lastName) {
+	let name = firstName + " " + lastName
+	console.log(name);
+	if ( currentGame().teamA.includes(name) ) {
+		return "teamA"
+	} else if ( currentGame().teamB.includes(name) ) {
+		return "teamB"
+	} else {
+		return undefined		// TODO what to return here?
+	}
+}
+
+function currentGame() {
+	return footballData.games[footballData.games.length - 1]
+}
+
+function genTestData() {	// Just for testing
+	newPlayer('Tim', 'Handy', 'tim@tim.com')
+	newPlayer('Jade', 'Andrews', 'jade@jade.com')
+	newPlayer('Sarah', 'Connop', 'sarah@sarah.com')
+	newPlayer('Jane', 'Doe', 'jane@jane.com')
+	newPlayer('Chris', 'Rollins', 'chris@chris.com')
+	newPlayer('Diego', 'Maradonna', 'diego@diego.com')
+	newPlayer('David', 'Beckham', 'becks@becks.com')
+	newPlayer('Misako', 'Cedeira', 'misako@mis.com')
+	newPlayer('Karl', 'Cedeira', 'karl@cedeira.com')
+	newPlayer('Leah', 'Andrews', 'leah@andrews.com')
+	newPlayer('Damo', 'Connop', 'damo@wolves.com')
+	setSkillLevel('Diego', 'Maradonna', 3)
+	setSkillLevel('David', 'Beckham', 3)
+	setSkillLevel('Damo', 'Connop', 3)
+	setSkillLevel('Jade', 'Andrews', 1)
+	setSkillLevel('Chris', 'Rollins', 1)
+	setSkillLevel('Misako', 'Cedeira', 1)
+	setSkillLevel('Leah', 'Andrews', 1)
+	setSkillLevel('Sarah', 'Connop', 1)
+
+	generateTeams(demoPlayers, function () {
+		generateGame(teamA, teamB)
+	})	// not people from players! these are just fake names
+}
+
+// End Helper functions ########################################################
+
+// Save data to localStorage
+function saveData() {
+	let str = JSON.stringify(footballData)
+	localStorage.setItem("footballData", str)
+	console.log( JSON.stringify(footballData, null, 2) )
+}
+
+// Retrieve data from localStorage
+function getData() {
+	let str = localStorage.getItem("footballData")
+	footballData = JSON.parse(str)
+	if (!footballData) {
+		footballData = {
+			players: [],
+			games: []
+		}
+	}
+}
+
+function deleteAllData() {
+	localStorage.removeItem('footballData')
+}
+
 function newPlayer(firstName, lastName, email) {
 	let obj = {
 		created: Date.now(),		// TODO should this be human readable? Probably
@@ -89,26 +134,18 @@ function newPlayer(firstName, lastName, email) {
 	saveData()
 }
 
-// function retirePlayerToggle(player) {
-// 	// Set player as inactive in footballData, add the date player was disabled (could be useful later for getting rid of old player data)
-// 	// Can't set to inactive unless moniesOwed = 0
-//
-// 	// locate player
-// 	// if (active === true)
-// 		// player.active = date.now()
-// 		// else player.active = true
-// 	saveData()
-// }
-
-// function editPlayer( player ) {
-// 	// Edit player details stored in footballData
-// 	// Need a player details display page for this?
-//
-// 	saveData()
-// }
-
-function findPlayerByName(firstName, lastName) {
-	return footballData.players.find(player => player.firstName === firstName && player.lastName === lastName)
+function retirePlayerToggle(firstName, lastName) {
+	let player = findPlayerByName(firstName, lastName)
+	if (player.moniesOwed == true) {
+		return 'Monies owed is not zero! Unable to retire player'
+	} else if (player.active) {
+		player.active = false
+		player.dateDisabled = Date()
+	} else if (!player.active) {
+		player.active = true
+		delete player.dateDisabled
+	}
+	saveData()
 }
 
 function setSkillLevel(firstName, lastName, skillLevel) {
@@ -139,22 +176,10 @@ function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus o
 // 	// Generate a new game date for the calendar and maybe email the 'active' status players
 // }
 
-// function displayLeagueStats(footballData) {
-// 	// Leaderboard of active players, by leagueScore. If tie, by leagueGoalsScored/forfeit score?
-// 	// Games attended
-// 	// For manager: highlight low skill level but high score... indicator of incorrect skill score?
-// 	// Scores are emailed out to all active players.
-// }
 
-function deleteAllData() {
-	localStorage.removeItem('footballData')
-}
+// TODO: appears to be a lot of firstName, lastName being passed around... can I fix that???
 
-function setPlayersOnPitch(players) {	// array of players in attendance
-	// Manager selects players in attendance before generateTeams can run, a list of players and tickboxes with a save button?
-	// create playersOnPitch array	- updateForfeit() to set the forfeit as paid etc. addForfeit(num) minusForfeit(num)
-}
-
+// Pre-game ####################################################################
 function playerLate(firstName, lastName, minutesLate) {
 	let tax = LATE_TAX * minutesLate;
 
@@ -162,55 +187,6 @@ function playerLate(firstName, lastName, minutesLate) {
 	player.moniesOwed += tax
 	// later could have the app do the time keeping, and generate the mins late from the time of the game start?
 }
-
-
-
-function generateTeams(playersOnPitch, callback) {  // array of players... callback is used in genTestData
-	teamA = [];
-	teamB = [];
-	let players = playersOnPitch.slice(0)		// make a copy of playersOnPitch
-
-	players = shuffle(players)				// shuffle players array
-
-	while (players.length > 0) {
-		teamA.push( players.pop() )
-		teamB.push( players.pop() )
-	}
-
-	teamB = teamB.filter(Boolean)	// remove an 'undefined' from teamB if uneven number of players.
-
-	if (callback) {
-		callback()
-	}
-
-	console.log(teamA)
-	console.log(teamB)
-
-	saveData()
-
-	// let count = 0
-	// for (i = 0; i < playersOnPitch.length; i++) {
-	// 	teamA.push(playersOnPitch[count])
-	// 	count += 1
-	// 	teamB.push(playersOnPitch[count])
-	// 	count += 1
-	// }
-
-	// If setPlayersOnPitch has been created, select evenly matched teams by ability and playersOnPitch
-	// Check if teams are evenly matched, difference of players should be +1, -1 or equal players. skill score totals should be almost the same.
-	// Each week the teams should be different - the above should sort this? maybe need to randomise the three skill arrs.
-	// Create a random(where skill=3) to pick from a single array of players... this might be better idea actually.
-	// return array of two team arrays?
-	// what if players turn up during the game? How to add them evenly to a team?
-}
-
-// function randomPlayer(playersOnPitch, skillLevel) {
-// 	// Return a random player of specified skill level from playersOnPitch for purpose of generating even teams.
-// }
-
-// function printTeams(teamA, teamB) {
-// 	// Outputs to a file/screen teamA and teamB?
-// }
 
 function generateGame(teamA, teamB) {
 	let game = {
@@ -220,44 +196,50 @@ function generateGame(teamA, teamB) {
 		teamAScore: 0,
 		teamBScore: 0,
 		scorers: [],	// ['Tim Handy', 'Jade Andrews', 'Karl Cedeira']  order in which goals were scored
-		endTime: undefined
+		endTime: undefined   // TODO: undefined or null?? which is most appropriate?
 	}
 
 	footballData.games.push(game)
 	saveData()
 }
 
+function generateTeams(playersOnPitch, callback) {  // array of player OBJECTS... callback is used in genTestData
+	teamA = [];
+	teamB = [];
+	let players = playersOnPitch.slice(0)		// make a copy of playersOnPitch  ['Tim Handy', 'Jade Andrews']
+
+	let threeStarPlayers = shuffle( justNames( findPlayersBySkillLevel(3) ) )  // ['David Beckham', 'Diego Maradonna']
+	let twoStarPlayers = shuffle( justNames( findPlayersBySkillLevel(2) ) )
+	let oneStarPlayers = shuffle( justNames( findPlayersBySkillLevel(1) ) )
+
+	let lineUp = threeStarPlayers.concat(twoStarPlayers, oneStarPlayers)
+	console.log(lineUp)	// ["David Beckham", "Diego Maradonna", "Damo Connop", "Tim Handy", "Jane Doe", "Karl Cedeira", "Chris Rollins", "Jade Andrews", "Leah Andrews"]
+
+	while (lineUp.length > 0) {
+		teamA.push( lineUp.pop() )
+		teamB.push( lineUp.pop() )	// TODO does this need to be a callback so that it does it in order?
+	}
+
+	teamB = teamB.filter(Boolean)	// remove an 'undefined' from teamB if uneven number of players.
+
+	if (teamA.length !== teamB.length) {	// aid in evening up teams if uneven number of skillLevel 3 players
+		teamB.unshift( teamA.shift() )		// moves a skillLevel 1 player from team A to team B
+	}
+
+	if (callback) {
+		callback()
+	}
+
+	console.log(teamA)
+	console.log(teamB)
+
+	// saveData()
+}
+
+
+// Game-time  ##################################################################
 function kickOff() {
 	// any use?
-}
-
-function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored) {
-	let player = findPlayerByName(firstName, lastName)
-	console.log(player)
-	player.leagueGoalsScored ? player.leagueGoalsScored += 1 : player.leagueGoalsScored = goalsScored  // need a ternary because it wouldn't += on a null or missing key
-	saveData()
-}
-
-function whichTeam(firstName, lastName) {
-	let name = firstName + " " + lastName
-	console.log(name);
-	if ( currentGame().teamA.includes(name) ) {
-		return "teamA"
-	} else if ( currentGame().teamB.includes(name) ) {
-		return "teamB"
-	} else {
-		return undefined		// what to return here?
-	}
-}
-
-function updateGameScore(firstName, lastName) {
-	if ( whichTeam(firstName, lastName) === 'teamA' ) {
-		currentGame().teamAScore += 1
-	} else if ( whichTeam(firstName, lastName) === 'teamB' ) {
-		currentGame().teamBScore += 1
-	} else {
-		console.log('player not on either team?')
-	}
 }
 
 function goalScored(firstName, lastName) {
@@ -273,21 +255,24 @@ function goalScored(firstName, lastName) {
 	}
 }
 
-function currentGame() {
-	return footballData.games[footballData.games.length - 1]
+function updateGameScore(firstName, lastName) {
+	if ( whichTeam(firstName, lastName) === 'teamA' ) {
+		currentGame().teamAScore += 1
+	} else if ( whichTeam(firstName, lastName) === 'teamB' ) {
+		currentGame().teamBScore += 1
+	} else {
+		console.log('player not on either team?')
+	}
 }
 
-function updatePlayerLeagueScore(firstName, lastName, points) {
+function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored) {
 	let player = findPlayerByName(firstName, lastName)
-	if (player.leagueScore) {
-		player.leagueScore += points
-	} else {
-		player.leagueScore = points
-	}
+	console.log(player)
+	player.leagueGoalsScored ? player.leagueGoalsScored += 1 : player.leagueGoalsScored = goalsScored  // need a ternary because it wouldn't += on a null or missing key
 	saveData()
 }
 
-function assignWinningPoints() {
+function assignWinningPoints() {		// TODO: Looks ripe for refactoring
 	// if draw
 	if ( currentGame().endTime ) {
 		if (currentGame().teamAScore === currentGame().teamBScore ) {
@@ -339,9 +324,13 @@ function assignWinningPoints() {
 
 }
 
-// update latest game's endTime to determine whether game complete or not.
-function setGameEndTime() {
-	currentGame().endTime = Date()
+function updatePlayerLeagueScore(firstName, lastName, points) {
+	let player = findPlayerByName(firstName, lastName)
+	if (player.leagueScore) {	// TODO try with a ternary now it's working
+		player.leagueScore += points
+	} else {
+		player.leagueScore = points
+	}
 	saveData()
 }
 
@@ -356,6 +345,15 @@ function finalWhistle() {
 	// clear gameStats
 }
 
+function setGameEndTime() {
+	// update latest game's endTime to determine whether game complete or not.
+	currentGame().endTime = Date()
+	saveData()
+}
+
+
+
+// Game stats functions ########################################################
 
 function latestGameStats() {
 	console.log(`Date: ${currentGame().date}`)
@@ -366,11 +364,18 @@ function latestGameStats() {
 	console.log(`Team B Players: ${currentGame().teamB}`)
 }
 
+// function displayLeagueStats(footballData) {
+// 	// Leaderboard of active players, by leagueScore. If tie, by leagueGoalsScored/forfeit score?
+// 	// Games attended
+// 	// For manager: highlight low skill level but high score... indicator of incorrect skill score?
+// 	// Scores are emailed out to all active players.
+// }
 
 getData()
 
+// example of data format
 // footballData = {
-//   "players": [
+//   "players": [			// array of objects, so can iterate through the array of objects
 //     {
 //       "created": 1476284285984,
 //       "firstName": "Tim",
@@ -418,8 +423,6 @@ getData()
 //   ]
 // }
 
-
-
 // const previousGameStats = [
 //
 // 	// All prior season's game stats saved here in a file?
@@ -455,14 +458,10 @@ getData()
 // newSeason();			// Archive off this season's data to another file and wipe this seasons data
 
 
-
-
-// could be stored in localstorage, on the device.
-//
 // learn testing: mocha
 //
 // don't do assertion libraries (eg. chai) yet!
 //
 // use the node.js built in assert library. require asserts.
 //
-// testing math.random. pass in a seed value. google seeeded random generator.
+// testing math.random. pass in a seed value. google seeded random generator.
