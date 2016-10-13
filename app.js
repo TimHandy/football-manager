@@ -416,7 +416,8 @@ function displayRawData() {
 
 getData()
 // If game ongoing, i.e. no endTime, restore previous gamestate
-if ( !currentGame().hasOwnProperty('endTime') ) {
+
+if (localStorage.getItem('footballData') == true && !currentGame().hasOwnProperty('endTime') ) {
 	$('body p:first').addClass('hidden')
 	$('.game-date').html(currentGame().date)
 	$('.game-date').removeClass('hidden')
