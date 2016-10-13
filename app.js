@@ -95,7 +95,7 @@ function genTestData() {	// Just for testing
 // Save data to localStorage
 function saveData() {
 	let str = JSON.stringify(footballData)
-	localStorage.setItem("footballData", str)
+	localStorage.setItem("footballData", str)	//setItem and getItem are pretty much all you can do with localStorage
 	console.log( JSON.stringify(footballData, null, 2) )
 }
 
@@ -238,6 +238,7 @@ function generateTeams(playersOnPitch, callback) {  // array of player OBJECTS..
 function kickOff() {
 	generateGame(teamA, teamB)
 	$('.game-date').html(currentGame().date)
+	$('.game-date').removeClass('hidden')
 	$('.game').removeClass('hidden')
 	$('.goal').removeClass('hidden')
 	$('.final-whistle').removeClass('hidden')
@@ -415,10 +416,9 @@ function displayRawData() {
 
 
 getData()
-// If game ongoing, i.e. no endTime, restore previous gamestate
-
-if (localStorage.getItem('footballData') == true && !currentGame().hasOwnProperty('endTime') ) {
-	$('body p:first').addClass('hidden')
+// If database is present and game ongoing, i.e. no endTime, restore previous gamestate
+if ( localStorage.getItem('footballData') && currentGame() && !currentGame().hasOwnProperty('endTime') ) {
+	$('body p:first').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
 	$('.game-date').html(currentGame().date)
 	$('.game-date').removeClass('hidden')
 	$('.players').removeClass('hidden')
