@@ -70,13 +70,13 @@ function genTestData() {	// Just for testing
 	newPlayer('Sarah', 'Connop', 'sarah@sarah.com')
 	newPlayer('Jane', 'Doe', 'jane@jane.com')
 	newPlayer('Chris', 'Rollins', 'chris@chris.com')
-	newPlayer('Diego', 'Maradonna', 'diego@diego.com')
+	newPlayer('Diego', 'Maradona', 'diego@diego.com')
 	newPlayer('David', 'Beckham', 'becks@becks.com')
 	newPlayer('Misako', 'Cedeira', 'misako@mis.com')
 	newPlayer('Karl', 'Cedeira', 'karl@cedeira.com')
 	newPlayer('Leah', 'Andrews', 'leah@andrews.com')
 	newPlayer('Damo', 'Connop', 'damo@wolves.com')
-	setSkillLevel('Diego', 'Maradonna', 3)
+	setSkillLevel('Diego', 'Maradona', 3)
 	setSkillLevel('David', 'Beckham', 3)
 	setSkillLevel('Damo', 'Connop', 3)
 	setSkillLevel('Jade', 'Andrews', 1)
@@ -188,21 +188,6 @@ function playerLate(firstName, lastName, minutesLate) {
 	// later could have the app do the time keeping, and generate the mins late from the time of the game start?
 }
 
-function generateGame(teamA, teamB) {
-	let game = {
-		date: Date(),
-		teamA: teamA,		// ['Tim Handy', 'Karl Cedeira']
-		teamB: teamB,		// ['Jade Andrews', 'Sarah Connop']
-		teamAScore: 0,
-		teamBScore: 0,
-		scorers: [],	// ['Tim Handy', 'Jade Andrews', 'Karl Cedeira']  order in which goals were scored
-		endTime: undefined   // TODO: undefined or null?? which is most appropriate?
-	}
-
-	footballData.games.push(game)
-	saveData()
-}
-
 function generateTeams(playersOnPitch, callback) {  // array of player OBJECTS... callback is used in genTestData
 	teamA = [];
 	teamB = [];
@@ -233,13 +218,49 @@ function generateTeams(playersOnPitch, callback) {  // array of player OBJECTS..
 	console.log(teamA)
 	console.log(teamB)
 
+	$('#team-a').html(teamA.map(function(name) {
+		return name + ', '
+	}))
+	$('#team-b').html(teamB.map(function(name) {
+		return name + ', '
+	}))
+	$('body p:first').addClass('hidden')
+	$('.kickoff').removeClass('hidden')
+	$('.players').removeClass('hidden')
+	$('.select-players').addClass('hidden')
+	$('.new-player').addClass('hidden')
+
+
 	// saveData()
 }
 
-
 // Game-time  ##################################################################
 function kickOff() {
-	// any use?
+	generateGame(teamA, teamB)
+	$('.game-date').html(currentGame().date)
+	$('.game').removeClass('hidden')
+	$('.goal').removeClass('hidden')
+	$('.final-whistle').removeClass('hidden')
+	$('.kickoff').addClass('hidden')
+	$('.generate-teams').addClass('hidden')
+	$('.delete-game').removeClass('hidden')
+
+	// Kickoff should generate the name dropdown for the goals to be added.
+}
+
+function generateGame(teamA, teamB) {
+	let game = {
+		date: Date(),
+		teamA: teamA,		// ['Tim Handy', 'Karl Cedeira']
+		teamB: teamB,		// ['Jade Andrews', 'Sarah Connop']
+		teamAScore: 0,
+		teamBScore: 0,
+		scorers: [],	// ['Tim Handy', 'Jade Andrews', 'Karl Cedeira']  order in which goals were scored
+		endTime: undefined   // TODO: undefined or null?? which is most appropriate?
+	}
+
+	footballData.games.push(game)
+	saveData()
 }
 
 function goalScored(firstName, lastName) {
@@ -253,6 +274,10 @@ function goalScored(firstName, lastName) {
 	} else {
 		console.log('game has already ended')
 	}
+
+
+	let player = document.forms.goal.goalscorer.value   // TODO unfinished! need to get the player from the dropdown and modify the goalScored function above to use it.
+
 }
 
 function updateGameScore(firstName, lastName) {
@@ -336,6 +361,13 @@ function updatePlayerLeagueScore(firstName, lastName, points) {
 
 function finalWhistle() {
 	setGameEndTime()
+	$('.final-score').removeClass('hidden')
+	$('.final-score p:nth-of-type(1)').html("Team A: " + currentGame().teamAScore)
+	$('.final-score p:nth-of-type(2)').html("Team B: " + currentGame().teamBScore)
+	$('.final-score p:nth-of-type(2)').append("<p>Scorers: " + currentGame().scorers + "</p>")
+	$('.goal').addClass('hidden')
+	$('.final-whistle').addClass('hidden')
+	$('.game').addClass('hidden')
 
 	// Output match stats to display? Winning team (goals scored in game)
 	// Output top goal scorer
@@ -348,6 +380,12 @@ function finalWhistle() {
 function setGameEndTime() {
 	// update latest game's endTime to determine whether game complete or not.
 	currentGame().endTime = Date()
+	saveData()
+}
+
+function deleteCurrentGame() {
+	footballData.games.splice(-1, 1)
+	location.reload();		// <= this is a page reload
 	saveData()
 }
 
@@ -371,7 +409,34 @@ function latestGameStats() {
 // 	// Scores are emailed out to all active players.
 // }
 
+function displayRawData() {
+	document.write( localStorage.getItem('footballData') );
+}
+
+
 getData()
+// If game ongoing, i.e. no endTime, restore previous gamestate
+if ( !currentGame().hasOwnProperty('endTime') ) {
+	$('body p:first').addClass('hidden')
+	$('.game-date').html(currentGame().date)
+	$('.game-date').removeClass('hidden')
+	$('.players').removeClass('hidden')
+	$('.select-players').addClass('hidden')
+	$('.new-player').addClass('hidden')
+	$('.game span').html(currentGame().date)
+	$('.game').removeClass('hidden')
+	$('.goal').removeClass('hidden')
+	$('.final-whistle').removeClass('hidden')
+	$('.kickoff').addClass('hidden')
+	$('.generate-teams').addClass('hidden')
+	$('#team-a').html(currentGame().teamA.map(function(name) {
+		return name + ', '
+	}))
+	$('#team-b').html(currentGame().teamB.map(function(name) {
+		return name + ', '
+	}))
+	$('.delete-game').removeClass('hidden')
+}
 
 // example of data format
 // footballData = {

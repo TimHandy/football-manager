@@ -3,12 +3,84 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Football App</title>
+
+		<link rel="stylesheet" href="styles.css" media="screen" title="no title">
 	</head>
 	<body>
 		<h1>Football App</h1>
 		<p>
-			Check the console, no GUI yet.
+			Stores players, generates evenly matched random teams based on player skill level, and stores player league stats to determine a winning player at the end of the season. <br /><br />
+			Beta v0.1.
 		</p>
+
+		<div class="new-player">
+			<button onclick="displayRawData()" type="button" name="button">Export Raw Data</button>
+		</div>
+		<div class="new-player">
+			<button type="button" name="button">New Player</button>
+		</div>
+		<div class="select-players">
+			<button type="button" name="button">Select Players</button>
+		</div>
+		<div class="generate-teams">
+			<button onclick="generateTeams(footballData.players)" type="button" name="button">Generate Teams</button>
+		</div>
+
+		<div class="game-date hidden">
+			<h3>Game: <span>Date</span></h3>
+		</div>
+
+		<div class="players hidden">
+			<h3>Team A</h3>
+			<p id='team-a'></p>
+			<h3>Team B</h3>
+			<p id='team-b'></p>
+		</div>
+
+		<div class="kickoff hidden">
+			<button onclick="kickOff()" type="button" name="button">Kickoff</button>
+		</div>
+
+		<div class="game hidden">
+			<h3>Current Score</h3>
+			<p>
+				Team A: 0
+			</p>
+			<p>
+				Team B: 0
+			</p>
+		</div>
+
+		<div class="goal hidden">
+			<form name="goal" class="" action="index.html" method="post">
+				<select class="" name="goalscorer">
+					<option>RED</option>
+					<option>BLUE</option>
+					<option>GREEN</option>
+				</select>
+				<button onclick="goalScored()" type="button" name="button">Goal</button>
+			</form>
+		</div>
+
+		<div class="final-whistle hidden">
+			<button onclick="finalWhistle()" type="button" name="button">Final Whistle</button>
+		</div>
+
+		<div class="final-score hidden">
+			<h3>Final Score</h3>
+			<p>
+				Team A:
+			</p>
+			<p>
+				Team B:
+			</p>
+		</div>
+
+		<div class="delete-game hidden">
+			<button onclick="deleteCurrentGame()" type="button" name="button">Delete Game</button>
+		</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script src="app.js"></script>
 	</body>
 </html>
