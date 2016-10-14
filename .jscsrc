@@ -5,7 +5,6 @@
 , "requireSemicolons": false
 , "maximumLineLength": 150
 , "maximumNumberOfLines": 500
-, "disallowMultipleLineBreaks": true
 , "requireMultipleVarDecl": null
 , "disallowEmptyBlocks": true
 , "disallowSpaceAfterObjectKeys": true

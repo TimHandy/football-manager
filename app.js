@@ -1,12 +1,11 @@
 // 'use strict'
 
 // const pricePerGame = 3			// £
-const LATE_TAX = 2				// £/min
+const LATE_TAX = 2	// £/min
 let teamA = []
 let teamB = []
 
 const demoPlayers = ['Tim Handy', 'Jade Andrews', 'Chris Rollins', 'Leah Andrews', 'Karl Cedeira', 'Misako Cedeira', 'David Beckham', 'Diego Maradonna', 'Jane Doe', 'Damo Connop', 'Sarah Connop']
-
 
 // Helper functions ############################################################
 function shuffle(array) {
@@ -42,7 +41,7 @@ function findPlayersBySkillLevel(skill) {
 	return footballData.players.filter(player => player.skillLevel === skill)
 }
 
-function justNames(playersArr) {
+function justNames(playersArr) {	// this is and example of pure
 	return playersArr.map(function(player) {
 		return player.firstName + " " + player.lastName
 	})
@@ -64,30 +63,34 @@ function currentGame() {
 	return footballData.games[footballData.games.length - 1]
 }
 
-function genTestData() {	// Just for testing
-	newPlayer('Tim', 'Handy', 'tim@tim.com')
-	newPlayer('Jade', 'Andrews', 'jade@jade.com')
-	newPlayer('Sarah', 'Connop', 'sarah@sarah.com')
-	newPlayer('Jane', 'Doe', 'jane@jane.com')
-	newPlayer('Chris', 'Rollins', 'chris@chris.com')
-	newPlayer('Diego', 'Maradona', 'diego@diego.com')
-	newPlayer('David', 'Beckham', 'becks@becks.com')
-	newPlayer('Misako', 'Cedeira', 'misako@mis.com')
-	newPlayer('Karl', 'Cedeira', 'karl@cedeira.com')
-	newPlayer('Leah', 'Andrews', 'leah@andrews.com')
-	newPlayer('Damo', 'Connop', 'damo@wolves.com')
-	setSkillLevel('Diego', 'Maradona', 3)
-	setSkillLevel('David', 'Beckham', 3)
-	setSkillLevel('Damo', 'Connop', 3)
-	setSkillLevel('Jade', 'Andrews', 1)
-	setSkillLevel('Chris', 'Rollins', 1)
-	setSkillLevel('Misako', 'Cedeira', 1)
-	setSkillLevel('Leah', 'Andrews', 1)
-	setSkillLevel('Sarah', 'Connop', 1)
+function consoleLogDb() {
+	console.log(JSON.stringify(footballData, null, 2));
+}
 
-	generateTeams(demoPlayers, function () {
-		generateGame(teamA, teamB)
-	})	// not people from players! these are just fake names
+function toggleNewPlayer() {
+	$('.new-player-form').slideToggle(200)
+}
+
+function genTestData() {	// Just for testing
+	newPlayer('Tim', 'Handy', 'tim@tim.com', 2)
+	newPlayer('Jade', 'Andrews', 'jade@jade.com', 1)
+	newPlayer('Sarah', 'Connop', 'sarah@sarah.com', 1)
+	newPlayer('Jane', 'Doe', 'jane@jane.com', 2)
+	newPlayer('Chris', 'Rollins', 'chris@chris.com', 1)
+	newPlayer('Diego', 'Maradona', 'diego@diego.com', 3)
+	newPlayer('David', 'Beckham', 'becks@becks.com', 3)
+	newPlayer('Misako', 'Cedeira', 'misako@mis.com', 1)
+	newPlayer('Karl', 'Cedeira', 'karl@cedeira.com', 2)
+	newPlayer('Leah', 'Andrews', 'leah@andrews.com', 1)
+	newPlayer('Damo', 'Connop', 'damo@wolves.com', 3)
+
+	// generateTeams(demoPlayers, function () {
+	// 	generateGame(teamA, teamB)
+	// })	// not people from players! these are just fake names
+
+	//location.reload();
+
+	$('.gen-test-data').addClass('hidden')
 }
 
 // End Helper functions ########################################################
@@ -113,16 +116,17 @@ function getData() {
 
 function deleteAllData() {
 	localStorage.removeItem('footballData')
+	location.reload();
 }
 
-function newPlayer(firstName, lastName, email) {
+function newPlayer(firstName, lastName, email, skillLevel) {
 	let obj = {
 		created: Date.now(),		// TODO should this be human readable? Probably
 		firstName: firstName,		// TODO name and email should be mandatory
 		lastName: lastName,			// TODO name and email should be mandatory
 		email: email,				// TODO name and email should be mandatory
 		active: true,
-		skillLevel: 2,				// default to 2
+		skillLevel: skillLevel,				// default to 2
 		leagueScore: 0,
 		leagueGoalsScored: 0
 	}
@@ -132,6 +136,17 @@ function newPlayer(firstName, lastName, email) {
 
 	footballData.players.push(obj)
 	saveData()
+}
+
+function newPlayerForm() {
+	let form = document.getElementById('new-player')
+	let firstName = form.fname.value
+	let lastName = form.lname.value
+	let email = form.email.value
+	let skillLevel = form.skill.value
+
+	newPlayer(firstName, lastName, email, skillLevel)
+
 }
 
 function retirePlayerToggle(firstName, lastName) {
@@ -188,10 +203,48 @@ function playerLate(firstName, lastName, minutesLate) {
 	// later could have the app do the time keeping, and generate the mins late from the time of the game start?
 }
 
-function generateTeams(playersOnPitch, callback) {  // array of player OBJECTS... callback is used in genTestData
+function displayAvailablePlayers() {
+	// generate an li for each player in players
+	let players = justNames(footballData.players)	// ['Tim Handy', 'Jade Andrews']
+	let list = $('#select-players ul')
+	$(list).html("")
+	players.forEach(function(player) {
+		$(list).append('<li><input type="checkbox" name="player" value="' + player + '">' + player + '</li>')
+	})
+	// TODO append in name order
+}
+
+let chosenPlayers = []
+function choosePlayers() {
+	// let form = document.getElementById('select-players')
+	// let name = form.name.value
+	//
+	// let lis = document.getElementsByTagName('li')
+	// lis = Array.prototype.slice.call(lis)
+	//
+	// lis.forEach(function(li) {
+	// 	console.log(li)
+	// })
+
+	var players = document.getElementsByName('player')
+	players = Array.prototype.slice.call(players)
+	for (var i = 0; i < players.length; i++) {
+		if (players[i].checked) {
+			chosenPlayers.push(players[i])
+		}
+	}
+
+	chosenPlayers = chosenPlayers.map(function(player) {
+		return player.value
+	})
+}
+
+
+
+function generateTeams(chosenPlayers, callback) {  // array of player OBJECTS... callback is used in genTestData
 	teamA = [];
 	teamB = [];
-	let players = playersOnPitch.slice(0)		// make a copy of playersOnPitch  ['Tim Handy', 'Jade Andrews']
+	let players = chosenPlayers.slice(0)		// make a copy of chosenPlayers  ['Tim Handy', 'Jade Andrews']
 
 	let threeStarPlayers = shuffle( justNames( findPlayersBySkillLevel(3) ) )  // ['David Beckham', 'Diego Maradonna']
 	let twoStarPlayers = shuffle( justNames( findPlayersBySkillLevel(2) ) )
@@ -224,7 +277,7 @@ function generateTeams(playersOnPitch, callback) {  // array of player OBJECTS..
 	$('#team-b').html(teamB.map(function(name) {
 		return name + ', '
 	}))
-	$('body p:first').addClass('hidden')
+	$('.intro-para').addClass('hidden')
 	$('.kickoff').removeClass('hidden')
 	$('.players').removeClass('hidden')
 	$('.select-players').addClass('hidden')
@@ -415,29 +468,48 @@ function displayRawData() {
 }
 
 
-getData()
+
 // If database is present and game ongoing, i.e. no endTime, restore previous gamestate
-if ( localStorage.getItem('footballData') && currentGame() && !currentGame().hasOwnProperty('endTime') ) {
-	$('body p:first').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
-	$('.game-date').html(currentGame().date)
-	$('.game-date').removeClass('hidden')
-	$('.players').removeClass('hidden')
-	$('.select-players').addClass('hidden')
-	$('.new-player').addClass('hidden')
-	$('.game span').html(currentGame().date)
-	$('.game').removeClass('hidden')
-	$('.goal').removeClass('hidden')
-	$('.final-whistle').removeClass('hidden')
-	$('.kickoff').addClass('hidden')
-	$('.generate-teams').addClass('hidden')
-	$('#team-a').html(currentGame().teamA.map(function(name) {
-		return name + ', '
-	}))
-	$('#team-b').html(currentGame().teamB.map(function(name) {
-		return name + ', '
-	}))
-	$('.delete-game').removeClass('hidden')
-}
+
+
+$(document).ready(function(){
+
+	if ( localStorage.getItem('footballData') == null ) {
+		$('.gen-test-data').removeClass('hidden')
+	} else {
+		$('.gen-test-data').addClass('hidden')
+	}
+
+    getData()
+
+	if ( localStorage.getItem('footballData') && currentGame() && !currentGame().hasOwnProperty('endTime') ) {
+		$('body p:first').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
+		$('.game-date').html(currentGame().date)
+		$('.game-date').removeClass('hidden')
+		$('.players').removeClass('hidden')
+		$('.select-players').addClass('hidden')
+		$('.new-player').addClass('hidden')
+		$('.game span').html(currentGame().date)
+		$('.game').removeClass('hidden')
+		$('.goal').removeClass('hidden')
+		$('.final-whistle').removeClass('hidden')
+		$('.kickoff').addClass('hidden')
+		$('.generate-teams').addClass('hidden')
+		$('#team-a').html(currentGame().teamA.map(function(name) {
+			return name + ', '
+		}))
+		$('#team-b').html(currentGame().teamB.map(function(name) {
+			return name + ', '
+		}))
+		$('.delete-game').removeClass('hidden')
+	} else {
+		//$('.gen-test-data').removeClass('hidden')
+	}
+
+});
+
+
+
 
 // example of data format
 // footballData = {

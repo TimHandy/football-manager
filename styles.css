@@ -5,3 +5,8 @@
 .delete-game{
 	padding-top: 50px;			/* temporary !! */
 }
+
+.dev-tools{
+	border: solid 1px red;
+	margin-bottom: 50px;
+}
