@@ -374,6 +374,8 @@ function goalScored(firstName, lastName) {
 		updateGameScore(firstName, lastName)
 		$('.team-a-score').html(currentGame().teamAScore)
 		$('.team-b-score').html(currentGame().teamBScore)
+		// TODO: player name on the dropdown should default to 'Player Name' after goal button is pressed
+		// TODO: update the players list with goals scored: Team A: Chris Rollins(1), Damo Connop(5) etc.
 		saveData()
 	} else {
 		console.log('game has already ended')
@@ -567,6 +569,8 @@ $(document).ready(function(){
 
 });
 
+// TODO: check for remaining functions written but not implemented
+// TODO: add bootstrap - it looks like shit on a phone in particular
 
 // TODO: allow adding a player once game is in progress. late players? maybe a dropdown of remaining unchosen players displayed whilst game is in progress.
 
