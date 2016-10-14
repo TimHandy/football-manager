@@ -10,3 +10,8 @@
 	border: solid 1px red;
 	margin-bottom: 50px;
 }
+
+button {
+	height: 50px;
+	width: 120px;
+}

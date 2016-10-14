@@ -8,6 +8,11 @@ let teamB = []
 const demoPlayers = ['Tim Handy', 'Jade Andrews', 'Chris Rollins', 'Leah Andrews', 'Karl Cedeira', 'Misako Cedeira', 'David Beckham', 'Diego Maradonna', 'Jane Doe', 'Damo Connop', 'Sarah Connop']
 
 // Helper functions ############################################################
+
+function back() {
+	location.reload();
+}
+
 function shuffle(array) {
 	//Fisher-Yates (aka Knuth) shuffle
 	// Used like so:
@@ -37,8 +42,8 @@ function findPlayerByName(firstName, lastName) {
 	return footballData.players.find(player => player.firstName === firstName && player.lastName === lastName)
 }
 
-function findPlayersBySkillLevel(skill) {
-	return footballData.players.filter(player => player.skillLevel === skill)
+function findPlayersBySkillLevel(playersarr, skill) {
+	return playersarr.filter(player => player.skillLevel === skill)
 }
 
 function justNames(playersArr) {	// this is and example of pure
@@ -214,21 +219,11 @@ function displayAvailablePlayers() {
 	// TODO append in name order
 }
 
-let chosenPlayers = []
+let chosenPlayers = []	// TODO dirty global variable, refactor to remove
 function choosePlayers() {
-	// let form = document.getElementById('select-players')
-	// let name = form.name.value
-	//
-	// let lis = document.getElementsByTagName('li')
-	// lis = Array.prototype.slice.call(lis)
-	//
-	// lis.forEach(function(li) {
-	// 	console.log(li)
-	// })
-
 	var players = document.getElementsByName('player')
 	players = Array.prototype.slice.call(players)
-	for (var i = 0; i < players.length; i++) {
+	for (var i = 0; i < players.length; i++) {		// TODO dirty for loop, use filter instead
 		if (players[i].checked) {
 			chosenPlayers.push(players[i])
 		}
@@ -236,19 +231,21 @@ function choosePlayers() {
 
 	chosenPlayers = chosenPlayers.map(function(player) {
 		return player.value
+	}).map(function(player) {
+		return findPlayerByName(player.split(' ')[0], player.split(' ')[1])
 	})
+	return chosenPlayers  // TODO not sure I need to return this right now, as the function sets the var chosenPlayers. Dirty. make other functions use this function as a return expression.
 }
 
 
-
-function generateTeams(chosenPlayers, callback) {  // array of player OBJECTS... callback is used in genTestData
+function generateTeams(chosenPlayers, callback) {  // pass in an array of player OBJECTS... callback is used in genTestData
 	teamA = [];
 	teamB = [];
 	let players = chosenPlayers.slice(0)		// make a copy of chosenPlayers  ['Tim Handy', 'Jade Andrews']
 
-	let threeStarPlayers = shuffle( justNames( findPlayersBySkillLevel(3) ) )  // ['David Beckham', 'Diego Maradonna']
-	let twoStarPlayers = shuffle( justNames( findPlayersBySkillLevel(2) ) )
-	let oneStarPlayers = shuffle( justNames( findPlayersBySkillLevel(1) ) )
+	let threeStarPlayers = shuffle( justNames( findPlayersBySkillLevel(players, 3) ) )  // ['David Beckham', 'Diego Maradonna']. TODO Think I've just created objects (choosePlayers) from strings and then back again to strings in here!
+	let twoStarPlayers = shuffle( justNames( findPlayersBySkillLevel(players, 2) ) )
+	let oneStarPlayers = shuffle( justNames( findPlayersBySkillLevel(players, 1) ) )
 
 	let lineUp = threeStarPlayers.concat(twoStarPlayers, oneStarPlayers)
 	console.log(lineUp)	// ["David Beckham", "Diego Maradonna", "Damo Connop", "Tim Handy", "Jane Doe", "Karl Cedeira", "Chris Rollins", "Jade Andrews", "Leah Andrews"]
@@ -272,24 +269,34 @@ function generateTeams(chosenPlayers, callback) {  // array of player OBJECTS...
 	console.log(teamB)
 
 	$('#team-a').html(teamA.map(function(name) {
-		return name + ', '
+		return name + ', '		// TODO don't want a comma if it's the last element! maybe a for loop while i < arr.length -1 might do it.
 	}))
 	$('#team-b').html(teamB.map(function(name) {
 		return name + ', '
 	}))
 	$('.intro-para').addClass('hidden')
+	$('.generate-teams').addClass('hidden')
 	$('.kickoff').removeClass('hidden')
 	$('.players').removeClass('hidden')
 	$('.select-players').addClass('hidden')
 	$('.new-player').addClass('hidden')
 
-
 	// saveData()
 }
 
+function wrapperforGenerateTeams() {	//TODO this is shitty having to make a wrapper.
+	// choosePlayers()
+	generateTeams(choosePlayers())
+}
+
+
+
+
 // Game-time  ##################################################################
+
 function kickOff() {
 	generateGame(teamA, teamB)
+	populatePlayerDropdown()
 	$('.game-date').html(currentGame().date)
 	$('.game-date').removeClass('hidden')
 	$('.game').removeClass('hidden')
@@ -298,8 +305,17 @@ function kickOff() {
 	$('.kickoff').addClass('hidden')
 	$('.generate-teams').addClass('hidden')
 	$('.delete-game').removeClass('hidden')
+}
 
-	// Kickoff should generate the name dropdown for the goals to be added.
+function populatePlayerDropdown() {		// FIXME dropdown names are lost on refresh. this should be recovered from state instead of chosenPlayers. teamA and teamB store these names.
+	let players = justNames(chosenPlayers)
+	let list = $('#dropdown-options')
+	$(list).html("<option>Player Name</option>")
+	players.forEach(function(player) {
+		$(list).append('<option>' + player + '</option>')
+	})
+
+	// TODO seems to be a lot going on with variables of chosenPlayers without being saved to storage, maybe chosen players should be stored early on?
 }
 
 function generateGame(teamA, teamB) {
@@ -317,13 +333,23 @@ function generateGame(teamA, teamB) {
 	saveData()
 }
 
+function goalButton() {
+	let dropdown = document.getElementById( 'dropdown-options' );
+	let player = dropdown.options[ dropdown.selectedIndex ].value
+	let firstName = player.split(' ')[0]
+	let lastName = player.split(' ')[1]
+	goalScored(firstName, lastName)
+}
+
+
 function goalScored(firstName, lastName) {
-	// Add/update teamAScorers/teamBScorers, teamAScore
 	if ( !currentGame().endTime ) {
 		currentGame().scorers.push(firstName + " " + lastName)
 		console.log('Scorer: ' + firstName + " " + lastName + ' added')
 		updatePlayerLeagueGoalsScored(firstName, lastName, 1)
 		updateGameScore(firstName, lastName)
+		$('.team-a-score').html(currentGame().teamAScore)
+		$('.team-b-score').html(currentGame().teamBScore)
 		saveData()
 	} else {
 		console.log('game has already ended')
@@ -482,8 +508,10 @@ $(document).ready(function(){
 
     getData()
 
-	if ( localStorage.getItem('footballData') && currentGame() && !currentGame().hasOwnProperty('endTime') ) {
+	// TODO make this into a 'recover state' type function that can be called in several places.
+	if ( localStorage.getItem('footballData') && currentGame() &&    !currentGame().hasOwnProperty('endTime') ) {
 		$('body p:first').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
+		$('.intro-para').addClass('hidden')
 		$('.game-date').html(currentGame().date)
 		$('.game-date').removeClass('hidden')
 		$('.players').removeClass('hidden')
@@ -501,6 +529,8 @@ $(document).ready(function(){
 		$('#team-b').html(currentGame().teamB.map(function(name) {
 			return name + ', '
 		}))
+		$('.team-a-score').html(currentGame().teamAScore)
+		$('.team-b-score').html(currentGame().teamBScore)
 		$('.delete-game').removeClass('hidden')
 	} else {
 		//$('.gen-test-data').removeClass('hidden')
@@ -509,9 +539,9 @@ $(document).ready(function(){
 });
 
 
+// TODO: allow adding a player once game is in progress. late players? maybe a dropdown of remaining unchosen players displayed whilst game is in progress.
 
-
-// example of data format
+// Data storage format:
 // footballData = {
 //   "players": [			// array of objects, so can iterate through the array of objects
 //     {

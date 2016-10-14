@@ -17,7 +17,7 @@
 			</div>
 
 			<div class="">
-				<button onclick="consoleLogDb()"type="button" name="button">console.log(database)</button>
+				<button onclick="consoleLogDb()"type="button" name="button">console.log (database)</button>
 			</div>
 
 			<div class="">
@@ -44,7 +44,7 @@
   					First name: <input type="text" name="fname" value="Donald"><br>
 					Last name: <input type="text" name="lname" value="Duck"><br>
 					Email: <input type="text" name="email" value="donald@disney.com"><br>
-					Skill Level: <input type="text" name="skill" value="Enter a number 1-3"><br>
+					Skill level (1-3): <input type="text" name="skill" value="2"><br>
 					<button onclick="newPlayerForm()" type="button" name="button">Submit</button>
 				</form>
 			</div>
@@ -58,9 +58,8 @@
 			</div>
 		</div>
 		<div class="generate-teams">
-			<button onclick="generateTeams(footballData.players)" type="button" name="button">Generate Teams</button>
+			<button onclick="wrapperforGenerateTeams()" type="button" name="button">Generate Teams</button>
 		</div>
-
 		<div class="game-date hidden">
 			<h3>Game: <span>Date</span></h3>
 		</div>
@@ -79,21 +78,19 @@
 		<div class="game hidden">
 			<h3>Current Score</h3>
 			<p>
-				Team A: 0
+				Team A: <span class="team-a-score">0</span>
 			</p>
 			<p>
-				Team B: 0
+				Team B: <span class="team-b-score">0</span>
 			</p>
 		</div>
 
 		<div class="goal hidden">
-			<form name="goal" class="" action="index.html" method="post">
-				<select class="" name="goalscorer">
-					<option>RED</option>
-					<option>BLUE</option>
-					<option>GREEN</option>
+			<form id="goal" class="">
+				<select id="dropdown-options" class="" name="goalscorer">
+					<option>Player Name</option>
 				</select>
-				<button onclick="goalScored()" type="button" name="button">Goal</button>
+				<button onclick="goalButton()" type="button" name="button">Goal</button>
 			</form>
 		</div>
 
@@ -104,11 +101,15 @@
 		<div class="final-score hidden">
 			<h3>Final Score</h3>
 			<p>
-				Team A:
+				Team A: <span class="team-a-score">0</span>
 			</p>
 			<p>
-				Team B:
+				Team B: <span class="team-b-score">0</span>
 			</p>
+		</div>
+
+		<div class="back">
+			<button onclick="back()" type="button" name="button">Back</button>
 		</div>
 
 		<div class="delete-game hidden">
