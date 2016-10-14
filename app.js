@@ -74,6 +74,7 @@ function consoleLogDb() {
 
 function toggleNewPlayer() {
 	$('.new-player-form').slideToggle(200)
+	$('.intro-para').addClass('hidden')
 }
 
 function genTestData() {	// Just for testing
@@ -136,22 +137,42 @@ function newPlayer(firstName, lastName, email, skillLevel) {
 		leagueGoalsScored: 0
 	}
 
+	// TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? where does the form validation go?
 	// TODO: prevent two players with the same first and last name
 	// TODO: prevent two players with the same email address
 
 	footballData.players.push(obj)
+	$('.intro-para').addClass('hidden')
 	saveData()
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
 }
 
 function newPlayerForm() {
 	let form = document.getElementById('new-player')
-	let firstName = form.fname.value
-	let lastName = form.lname.value
-	let email = form.email.value
-	let skillLevel = form.skill.value
+	let firstName = capitalizeFirstLetter(form.fname.value)
+	let lastName = capitalizeFirstLetter(form.lname.value)
+	let email = form.email.value.toLowerCase()
+	let skillLevel = parseInt(form.skill.value)
+	// TODO: validations on names and skill entries
+		// valid email address
+		// email address is mandatory
+		// email can't already exist in database
+		// valid skill level: integer 1-3
+		// skill level is mandatory
+		// must have a first name
+		// firstname can't be 'first name'
+		// firstname is mandatory
+		// must have a last name
+		// lastname can't be 'last name'
+		// lastname is mandatory
+		// email address, firstName, and lastname combo can't be in the database
 
 	newPlayer(firstName, lastName, email, skillLevel)
 
+	// TODO notify user of success/fail on adding a new player
 }
 
 function retirePlayerToggle(firstName, lastName) {
@@ -210,12 +231,13 @@ function playerLate(firstName, lastName, minutesLate) {
 
 function displayAvailablePlayers() {
 	// generate an li for each player in players
-	let players = justNames(footballData.players)	// ['Tim Handy', 'Jade Andrews']
+	let players = justNames(footballData.players).sort()	// ['Tim Handy', 'Jade Andrews']
 	let list = $('#select-players ul')
 	$(list).html("")
 	players.forEach(function(player) {
 		$(list).append('<li><input type="checkbox" name="player" value="' + player + '">' + player + '</li>')
 	})
+	$('.intro-para').addClass('hidden')
 	// TODO append in name order
 }
 
@@ -282,6 +304,8 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 	$('.new-player').addClass('hidden')
 
 	// saveData()
+
+	// TODO: validate the generateTeams button, there must be > 1 players selected
 }
 
 function wrapperforGenerateTeams() {	//TODO this is shitty having to make a wrapper.
@@ -296,7 +320,7 @@ function wrapperforGenerateTeams() {	//TODO this is shitty having to make a wrap
 
 function kickOff() {
 	generateGame(teamA, teamB)
-	populatePlayerDropdown()
+	populatePlayerDropdown(teamA.concat(teamB))
 	$('.game-date').html(currentGame().date)
 	$('.game-date').removeClass('hidden')
 	$('.game').removeClass('hidden')
@@ -307,8 +331,8 @@ function kickOff() {
 	$('.delete-game').removeClass('hidden')
 }
 
-function populatePlayerDropdown() {		// FIXME dropdown names are lost on refresh. this should be recovered from state instead of chosenPlayers. teamA and teamB store these names.
-	let players = justNames(chosenPlayers)
+function populatePlayerDropdown(playerNamesArr) {		// FIXME dropdown names are lost on refresh. this should be recovered from state instead of chosenPlayers. teamA and teamB store these names.
+	let players = playerNamesArr
 	let list = $('#dropdown-options')
 	$(list).html("<option>Player Name</option>")
 	players.forEach(function(player) {
@@ -346,7 +370,7 @@ function goalScored(firstName, lastName) {
 	if ( !currentGame().endTime ) {
 		currentGame().scorers.push(firstName + " " + lastName)
 		console.log('Scorer: ' + firstName + " " + lastName + ' added')
-		updatePlayerLeagueGoalsScored(firstName, lastName, 1)
+		updatePlayerLeagueGoalsScored(firstName, lastName, 1)	// should only be added at final whistle in case game is cancelled
 		updateGameScore(firstName, lastName)
 		$('.team-a-score').html(currentGame().teamAScore)
 		$('.team-b-score').html(currentGame().teamBScore)
@@ -375,6 +399,7 @@ function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored) {
 	console.log(player)
 	player.leagueGoalsScored ? player.leagueGoalsScored += 1 : player.leagueGoalsScored = goalsScored  // need a ternary because it wouldn't += on a null or missing key
 	saveData()
+	// TODO: this should only be added at final whistle, in case game is cancelled
 }
 
 function assignWinningPoints() {		// TODO: Looks ripe for refactoring
@@ -441,6 +466,7 @@ function updatePlayerLeagueScore(firstName, lastName, points) {
 
 function finalWhistle() {
 	setGameEndTime()
+	assignWinningPoints()
 	$('.final-score').removeClass('hidden')
 	$('.final-score p:nth-of-type(1)').html("Team A: " + currentGame().teamAScore)
 	$('.final-score p:nth-of-type(2)').html("Team B: " + currentGame().teamBScore)
@@ -448,6 +474,7 @@ function finalWhistle() {
 	$('.goal').addClass('hidden')
 	$('.final-whistle').addClass('hidden')
 	$('.game').addClass('hidden')
+	$('.delete-game').addClass('hidden')
 
 	// Output match stats to display? Winning team (goals scored in game)
 	// Output top goal scorer
@@ -467,6 +494,7 @@ function deleteCurrentGame() {
 	footballData.games.splice(-1, 1)
 	location.reload();		// <= this is a page reload
 	saveData()
+	// TODO: this should remove any scores added to players scores
 }
 
 
@@ -532,6 +560,7 @@ $(document).ready(function(){
 		$('.team-a-score').html(currentGame().teamAScore)
 		$('.team-b-score').html(currentGame().teamBScore)
 		$('.delete-game').removeClass('hidden')
+		populatePlayerDropdown( currentGame().teamA.concat(currentGame().teamB) )
 	} else {
 		//$('.gen-test-data').removeClass('hidden')
 	}

@@ -9,7 +9,12 @@
 .dev-tools{
 	border: solid 1px red;
 	margin-bottom: 50px;
+	/*display:none;*/
 }
+ 	.dev-tools button {
+		height: auto;
+		width: auto;
+	}
 
 button {
 	height: 50px;
