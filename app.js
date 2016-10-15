@@ -2,12 +2,37 @@
 
 // const pricePerGame = 3			// £
 const LATE_TAX = 2	// £/min
+const LOCAL_STORAGE_NAME = "footballData"
 let teamA = []
 let teamB = []
 
 const demoPlayers = ['Tim Handy', 'Jade Andrews', 'Chris Rollins', 'Leah Andrews', 'Karl Cedeira', 'Misako Cedeira', 'David Beckham', 'Diego Maradonna', 'Jane Doe', 'Damo Connop', 'Sarah Connop']
 
 // Helper functions ############################################################
+
+// Retrieve data from localStorage
+function getData() {
+	let str = localStorage.getItem(LOCAL_STORAGE_NAME)
+	jsonData = JSON.parse(str)
+	if (!jsonData) {
+		jsonData = {
+			players: [],
+			games: []
+		}
+	}
+}
+
+// Save data to localStorage
+function saveData() {
+	let str = JSON.stringify(jsonData)
+	localStorage.setItem(LOCAL_STORAGE_NAME, str)	//setItem and getItem are pretty much all you can do with localStorage
+	console.log( JSON.stringify(jsonData, null, 2) )
+}
+
+function deleteAllData() {
+	localStorage.removeItem(LOCAL_STORAGE_NAME)
+	location.reload();
+}
 
 function back() {
 	location.reload();
@@ -39,14 +64,14 @@ function shuffle(array) {
 }
 
 function findPlayerByName(firstName, lastName) {
-	return footballData.players.find(player => player.firstName === firstName && player.lastName === lastName)
+	return jsonData.players.find(player => player.firstName === firstName && player.lastName === lastName)
 }
 
-function findPlayersBySkillLevel(playersarr, skill) {
+function findPlayersBySkillLevel(playersarr, skill) {	// requires an array of player objects
 	return playersarr.filter(player => player.skillLevel === skill)
 }
 
-function justNames(playersArr) {	// this is and example of pure
+function justNames(playersArr) {	// this is an example of a pure function
 	return playersArr.map(function(player) {
 		return player.firstName + " " + player.lastName
 	})
@@ -65,18 +90,11 @@ function whichTeam(firstName, lastName) {
 }
 
 function currentGame() {
-	return footballData.games[footballData.games.length - 1]
+	return jsonData.games[jsonData.games.length - 1]
 }
 
 function consoleLogDb() {
-	console.log(JSON.stringify(footballData, null, 2));
-}
-
-function toggleNewPlayer() {
-	$('.new-player-form').removeClass('hidden')
-	$('.intro-para').addClass('hidden')
-	$('#new-player-button').addClass('hidden')
-	$('#select-players-button').addClass('hidden')
+	console.log(JSON.stringify(jsonData, null, 2));
 }
 
 function genTestData() {	// Just for testing
@@ -101,33 +119,14 @@ function genTestData() {	// Just for testing
 	$('.gen-test-data').addClass('hidden')
 }
 
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
+}
+
 // End Helper functions ########################################################
 
-// Save data to localStorage
-function saveData() {
-	let str = JSON.stringify(footballData)
-	localStorage.setItem("footballData", str)	//setItem and getItem are pretty much all you can do with localStorage
-	console.log( JSON.stringify(footballData, null, 2) )
-}
 
-// Retrieve data from localStorage
-function getData() {
-	let str = localStorage.getItem("footballData")
-	footballData = JSON.parse(str)
-	if (!footballData) {
-		footballData = {
-			players: [],
-			games: []
-		}
-	}
-}
-
-function deleteAllData() {
-	localStorage.removeItem('footballData')
-	location.reload();
-}
-
-function newPlayer(firstName, lastName, email, skillLevel) {
+function newPlayer(firstName, lastName, email, skillLevel) {		// TODO: this is a noun, should be a verb
 	let obj = {
 		created: Date.now(),		// TODO should this be human readable? Probably
 		firstName: firstName,		// TODO name and email should be mandatory
@@ -143,16 +142,20 @@ function newPlayer(firstName, lastName, email, skillLevel) {
 	// TODO: prevent two players with the same first and last name
 	// TODO: prevent two players with the same email address
 
-	footballData.players.push(obj)
+	jsonData.players.push(obj)
 	$('.intro-para').addClass('hidden')
 	saveData()
 }
+// TODO: there is a newPlayer and a newPlayerForm function?
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1);
+function toggleNewPlayer() { // TODO: what does this do? should it be elsewhere?
+	$('.new-player-form').removeClass('hidden')
+	$('.intro-para').addClass('hidden')
+	$('#new-player-button').addClass('hidden')
+	$('#select-players-button').addClass('hidden')
 }
 
-function newPlayerForm() {
+function newPlayerForm() {		// TODO: this is a noun, should be a verb
 	let form = document.getElementById('new-player')
 	let firstName = capitalizeFirstLetter(form.fname.value)
 	let lastName = capitalizeFirstLetter(form.lname.value)
@@ -192,7 +195,7 @@ function retirePlayerToggle(firstName, lastName) {
 }
 
 function setSkillLevel(firstName, lastName, skillLevel) {
-	// footballData is an object, containing a players key, whose value is an array of player objects.
+	// jsonData is an object, containing a players key, whose value is an array of player objects.
 	var player = findPlayerByName(firstName, lastName)
 	if (player) {
 		player.skillLevel = skillLevel
@@ -203,14 +206,14 @@ function setSkillLevel(firstName, lastName, skillLevel) {
 }
 
 function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus or minus £/$
-	// update footballData moniesOwed field
+	// update jsonData moniesOwed field
 
 	findPlayerByName(firstName, lastName).moniesOwed += currencyValue
 	saveData()
 }
 
 // function newSeason() {
-// 	// Archive off this season's data (previousGameStats and footballData to another file) then wipe
+// 	// Archive off this season's data (previousGameStats and jsonData to another file) then wipe
 // 	// Create a new localStorage entry and copy all data to that one
 // 	// This seasons data, including all stats, but leaving players and moniesOwed (reset their scores)
 // }
@@ -233,7 +236,7 @@ function playerLate(firstName, lastName, minutesLate) {
 
 function displayAvailablePlayers() {
 	// generate an li for each player in players
-	let players = justNames(footballData.players).sort()	// ['Tim Handy', 'Jade Andrews']
+	let players = justNames(jsonData.players).sort()	// ['Tim Handy', 'Jade Andrews']
 	let list = $('#select-players ul')
 	$(list).html("")
 	players.forEach(function(player) {
@@ -314,7 +317,7 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 	// TODO: validate the generateTeams button, there must be > 1 players selected
 }
 
-function wrapperforGenerateTeams() {	//TODO this is shitty having to make a wrapper.
+function wrapperforGenerateTeams() {	//TODO this is shitty having to make a wrapper. it's also a noun, not a verb.
 	// choosePlayers()
 	generateTeams(choosePlayers())
 }
@@ -359,11 +362,11 @@ function generateGame(teamA, teamB) {
 		endTime: undefined   // TODO: undefined or null?? which is most appropriate?
 	}
 
-	footballData.games.push(game)
+	jsonData.games.push(game)
 	saveData()
 }
 
-function goalButton() {
+function goalButton() {  // TODO: should be a verb
 	let dropdown = document.getElementById( 'dropdown-options' );
 	let player = dropdown.options[ dropdown.selectedIndex ].value
 	let firstName = player.split(' ')[0]
@@ -374,7 +377,7 @@ function goalButton() {
 }
 
 
-function goalScored(firstName, lastName) {
+function goalScored(firstName, lastName) {	// TODO: should be a verb
 	if ( !currentGame().endTime ) {
 		currentGame().scorers.push(firstName + " " + lastName)
 		console.log('Scorer: ' + firstName + " " + lastName + ' added')
@@ -474,7 +477,7 @@ function updatePlayerLeagueScore(firstName, lastName, points) {
 	saveData()
 }
 
-function finalWhistle() {
+function finalWhistle() {		// TODO: should be a verb
 	setGameEndTime()
 	assignWinningPoints()
 	$('.final-score').removeClass('hidden')
@@ -489,8 +492,8 @@ function finalWhistle() {
 
 	// Output match stats to display? Winning team (goals scored in game)
 	// Output top goal scorer
-	// update each Player's stats from teamAScorers/teamBScorers to footballData leagueGoalsScored if they scored. 1 point for each goal
-	// leagueScore - for each Players add to their individual footballData stats 3 for a win, 2 for a draw, 1 for a loss
+	// update each Player's stats from teamAScorers/teamBScorers to jsonData leagueGoalsScored if they scored. 1 point for each goal
+	// leagueScore - for each Players add to their individual jsonData stats 3 for a win, 2 for a draw, 1 for a loss
 	// add gameStats to previousGameStats and store back in DB
 	// clear gameStats
 }
@@ -502,7 +505,7 @@ function setGameEndTime() {
 }
 
 function deleteCurrentGame() {
-	footballData.games.splice(-1, 1)
+	jsonData.games.splice(-1, 1)
 	location.reload();		// <= this is a page reload
 	saveData()
 	// TODO: this should remove any scores added to players scores
@@ -513,7 +516,7 @@ function deleteCurrentGame() {
 
 // Game stats functions ########################################################
 
-function latestGameStats() {
+function latestGameStats() {	// TODO: should be a verb
 	console.log(`Date: ${currentGame().date}`)
 	console.log(`Team A: ${currentGame().teamAScore}`)
 	console.log(`Team B: ${currentGame().teamBScore}`)
@@ -522,7 +525,7 @@ function latestGameStats() {
 	console.log(`Team B Players: ${currentGame().teamB}`)
 }
 
-// function displayLeagueStats(footballData) {
+// function displayLeagueStats(jsonData) {
 // 	// Leaderboard of active players, by leagueScore. If tie, by leagueGoalsScored/forfeit score?
 // 	// Games attended
 // 	// For manager: highlight low skill level but high score... indicator of incorrect skill score?
@@ -530,7 +533,7 @@ function latestGameStats() {
 // }
 
 function displayRawData() {
-	document.write( localStorage.getItem('footballData') );
+	document.write( localStorage.getItem('jsonData') );
 }
 
 
@@ -540,16 +543,10 @@ function displayRawData() {
 
 $(document).ready(function(){
 
-	if ( localStorage.getItem('footballData') == null ) {
-		$('.gen-test-data').removeClass('hidden')
-	} else {
-		$('.gen-test-data').addClass('hidden')
-	}
-
     getData()
 
 	// TODO make this into a 'recover state' type function that can be called in several places.
-	if ( localStorage.getItem('footballData') && currentGame() &&    !currentGame().hasOwnProperty('endTime') ) {
+	if ( localStorage.getItem(LOCAL_STORAGE_NAME) && currentGame() &&    !currentGame().hasOwnProperty('endTime') ) {
 		$('body p:first').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
 		$('.intro-para').addClass('hidden')
 		$('.game-date').html(currentGame().date)
@@ -585,7 +582,7 @@ $(document).ready(function(){
 // TODO: allow adding a player once game is in progress. late players? maybe a dropdown of remaining unchosen players displayed whilst game is in progress.
 
 // Data storage format:
-// footballData = {
+// jsonData = {
 //   "players": [			// array of objects, so can iterate through the array of objects
 //     {
 //       "created": 1476284285984,
@@ -660,7 +657,7 @@ $(document).ready(function(){
 //
 // goalScored();			// Record a goal. Not sure how to do the players.... drop down selector somehow?
 //
-// finalWhistle();			// Sorts out final game stats and stores data back to footballData and previousGameStats objects. Saves data somewhere
+// finalWhistle();			// Sorts out final game stats and stores data back to jsonData and previousGameStats objects. Saves data somewhere
 //
 // displayLeagueStats();	// Display current player league stats
 //
