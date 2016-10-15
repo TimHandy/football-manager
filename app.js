@@ -560,7 +560,6 @@ function displayRawData() {
 $(document).ready(function(){
 
     getData()
-	getLeagueStats(jsonData)
 	if ( jsonData.players.length > 0 ) {
 		$('.gen-test-data').addClass('hidden')
 
