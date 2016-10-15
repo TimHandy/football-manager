@@ -85,7 +85,7 @@ function whichTeam(firstName, lastName) {
 	} else if ( currentGame().teamB.includes(name) ) {
 		return "teamB"
 	} else {
-		return undefined		// TODO what to return here?
+		return undefined		// TODO: what to return here?
 	}
 }
 
@@ -126,12 +126,12 @@ function capitalizeFirstLetter(string) {
 // End Helper functions ########################################################
 
 
-function newPlayer(firstName, lastName, email, skillLevel) {		// TODO: this is a noun, should be a verb
+function newPlayer(firstName, lastName, email, skillLevel) {		// FIXME: this is a noun, should be a verb
 	let obj = {
-		created: Date.now(),		// TODO should this be human readable? Probably
-		firstName: firstName,		// TODO name and email should be mandatory
-		lastName: lastName,			// TODO name and email should be mandatory
-		email: email,				// TODO name and email should be mandatory
+		created: Date.now(),		// TODO: should this be human readable? Probably
+		firstName: firstName,		// FIXME: name and email should be mandatory
+		lastName: lastName,			// FIXME: name and email should be mandatory
+		email: email,				// FIXME: name and email should be mandatory
 		active: true,
 		skillLevel: skillLevel,				// default to 2
 		leagueScore: 0,
@@ -139,8 +139,8 @@ function newPlayer(firstName, lastName, email, skillLevel) {		// TODO: this is a
 	}
 
 	// TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? where does the form validation go?
-	// TODO: prevent two players with the same first and last name
-	// TODO: prevent two players with the same email address
+	// FIXME: prevent two players with the same first and last name
+	// FIXME: prevent two players with the same email address
 
 	jsonData.players.push(obj)
 	$('.intro-para').addClass('hidden')
@@ -155,29 +155,29 @@ function toggleNewPlayer() { // TODO: what does this do? should it be elsewhere?
 	$('#select-players-button').addClass('hidden')
 }
 
-function newPlayerForm() {		// TODO: this is a noun, should be a verb
+function newPlayerForm() {		// FIXME: this is a noun, should be a verb
 	let form = document.getElementById('new-player')
 	let firstName = capitalizeFirstLetter(form.fname.value)
 	let lastName = capitalizeFirstLetter(form.lname.value)
 	let email = form.email.value.toLowerCase()
 	let skillLevel = parseInt(form.skill.value)
-	// TODO: validations on names and skill entries
-		// valid email address
-		// email address is mandatory
-		// email can't already exist in database
-		// valid skill level: integer 1-3
-		// skill level is mandatory
-		// must have a first name
-		// firstname can't be 'first name'
-		// firstname is mandatory
-		// must have a last name
-		// lastname can't be 'last name'
-		// lastname is mandatory
-		// email address, firstName, and lastname combo can't be in the database
+	// FIXME: validations on names and skill entries
+		//FIXME: valid email address
+		//FIXME: email address is mandatory
+		//FIXME: email can't already exist in database
+		//FIXME: valid skill level: integer 1-3
+		//FIXME: skill level is mandatory
+		//FIXME: must have a first name
+		//FIXME: firstname can't be 'first name'
+		//FIXME: firstname is mandatory
+		//FIXME: must have a last name
+		//FIXME: lastname can't be 'last name'
+		//FIXME: lastname is mandatory
+		//FIXME: email address, firstName, and lastname combo can't be in the database
 
 	newPlayer(firstName, lastName, email, skillLevel)
 
-	// TODO notify user of success/fail on adding a new player
+	// FIXME: notify user of success/fail on adding a new player
 }
 
 function retirePlayerToggle(firstName, lastName) {
@@ -222,10 +222,10 @@ function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus o
 // 	// Generate a new game date for the calendar and maybe email the 'active' status players
 // }
 
-
 // TODO: appears to be a lot of firstName, lastName being passed around... can I fix that???
 
 // Pre-game ####################################################################
+
 function playerLate(firstName, lastName, minutesLate) {
 	let tax = LATE_TAX * minutesLate;
 
@@ -247,14 +247,13 @@ function displayAvailablePlayers() {
 	$('.generate-teams').removeClass('hidden')
 	$('#select-players-button').addClass('hidden')
 	$('#new-player-button').addClass('hidden')
-	// TODO append in name order
 }
 
-let chosenPlayers = []	// TODO dirty global variable, refactor to remove
+let chosenPlayers = []	// TODO: dirty global variable, refactor to remove
 function choosePlayers() {
 	var players = document.getElementsByName('player')
 	players = Array.prototype.slice.call(players)
-	for (var i = 0; i < players.length; i++) {		// TODO dirty for loop, use filter instead
+	for (var i = 0; i < players.length; i++) {		// TODO: dirty for loop, use filter instead
 		if (players[i].checked) {
 			chosenPlayers.push(players[i])
 		}
@@ -265,7 +264,9 @@ function choosePlayers() {
 	}).map(function(player) {
 		return findPlayerByName(player.split(' ')[0], player.split(' ')[1])
 	})
-	return chosenPlayers  // TODO not sure I need to return this right now, as the function sets the var chosenPlayers. Dirty. make other functions use this function as a return expression.
+	return chosenPlayers  // TODO: not sure I need to return this right now, as the function sets the var chosenPlayers. Dirty. make other functions use this function as a return expression.
+
+	// TODO: seems to be a lot going on with variables of chosenPlayers without being saved to storage, maybe chosen players should be stored early on?
 }
 
 
@@ -279,11 +280,11 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 	let oneStarPlayers = shuffle( justNames( findPlayersBySkillLevel(players, 1) ) )
 
 	let lineUp = threeStarPlayers.concat(twoStarPlayers, oneStarPlayers)
-	console.log(lineUp)	// ["David Beckham", "Diego Maradonna", "Damo Connop", "Tim Handy", "Jane Doe", "Karl Cedeira", "Chris Rollins", "Jade Andrews", "Leah Andrews"]
+	console.log('Lineup: ', lineUp)	// ["David Beckham", "Diego Maradonna", "Damo Connop", "Tim Handy", "Jane Doe", "Karl Cedeira", "Chris Rollins", "Jade Andrews", "Leah Andrews"]
 
 	while (lineUp.length > 0) {
 		teamA.push( lineUp.pop() )
-		teamB.push( lineUp.pop() )	// TODO does this need to be a callback so that it does it in order?
+		teamB.push( lineUp.pop() )	// TODO: does this need to be a callback so that it does it in order?
 	}
 
 	teamB = teamB.filter(Boolean)	// remove an 'undefined' from teamB if uneven number of players.
@@ -296,11 +297,11 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 		callback()
 	}
 
-	console.log(teamA)
-	console.log(teamB)
+	console.log('Team A: ', teamA)
+	console.log('Team B: ', teamB)
 
 	$('#team-a').html(teamA.map(function(name) {
-		return name + ', '		// TODO don't want a comma if it's the last element! maybe a for loop while i < arr.length -1 might do it.
+		return name + ', '		// FIXME: don't want a comma if it's the last element! maybe a for loop while i < arr.length -1 might do it.
 	}))
 	$('#team-b').html(teamB.map(function(name) {
 		return name + ', '
@@ -322,9 +323,6 @@ function wrapperforGenerateTeams() {	//TODO this is shitty having to make a wrap
 	generateTeams(choosePlayers())
 }
 
-
-
-
 // Game-time  ##################################################################
 
 function kickOff() {
@@ -340,15 +338,13 @@ function kickOff() {
 	$('.delete-game').removeClass('hidden')
 }
 
-function populatePlayerDropdown(playerNamesArr) {		// FIXME dropdown names are lost on refresh. this should be recovered from state instead of chosenPlayers. teamA and teamB store these names.
+function populatePlayerDropdown(playerNamesArr) {
 	let players = playerNamesArr
 	let list = $('#dropdown-options')
 	$(list).html("<option>Player Name</option>")
 	players.forEach(function(player) {
 		$(list).append('<option>' + player + '</option>')
 	})
-
-	// TODO seems to be a lot going on with variables of chosenPlayers without being saved to storage, maybe chosen players should be stored early on?
 }
 
 function generateGame(teamA, teamB) {
@@ -366,7 +362,7 @@ function generateGame(teamA, teamB) {
 	saveData()
 }
 
-function goalButton() {  // TODO: should be a verb
+function goalButton() {  // FIXME: should be a verb
 	let dropdown = document.getElementById( 'dropdown-options' );
 	let player = dropdown.options[ dropdown.selectedIndex ].value
 	let firstName = player.split(' ')[0]
@@ -376,8 +372,7 @@ function goalButton() {  // TODO: should be a verb
 	// TODO: set dropdown back to 'Player Name' after valid goal button press
 }
 
-
-function goalScored(firstName, lastName) {	// TODO: should be a verb
+function goalScored(firstName, lastName) {	// FIXME: should be a verb
 	if ( !currentGame().endTime ) {
 		currentGame().scorers.push(firstName + " " + lastName)
 		console.log('Scorer: ' + firstName + " " + lastName + ' added')
@@ -393,7 +388,7 @@ function goalScored(firstName, lastName) {	// TODO: should be a verb
 	}
 
 
-	let player = document.forms.goal.goalscorer.value   // TODO unfinished! need to get the player from the dropdown and modify the goalScored function above to use it.
+	let player = document.forms.goal.goalscorer.value   // TODO: unfinished! need to get the player from the dropdown and modify the goalScored function above to use it.
 
 }
 
@@ -464,12 +459,11 @@ function assignWinningPoints() {		// TODO: Looks ripe for refactoring
 	} else {
 		console.log("game end time not set")
 	}
-
 }
 
 function updatePlayerLeagueScore(firstName, lastName, points) {
 	let player = findPlayerByName(firstName, lastName)
-	if (player.leagueScore) {	// TODO try with a ternary now it's working
+	if (player.leagueScore) {	// TODO: try with a ternary now it's working
 		player.leagueScore += points
 	} else {
 		player.leagueScore = points
@@ -477,9 +471,10 @@ function updatePlayerLeagueScore(firstName, lastName, points) {
 	saveData()
 }
 
-function finalWhistle() {		// TODO: should be a verb
+function finalWhistle() {		// FIXME: should be a verb
 	setGameEndTime()
 	assignWinningPoints()
+	getLeagueStats(jsonData)
 	$('.final-score').removeClass('hidden')
 	$('.final-score p:nth-of-type(1)').html("Team A: " + currentGame().teamAScore)
 	$('.final-score p:nth-of-type(2)').html("Team B: " + currentGame().teamBScore)
@@ -512,11 +507,9 @@ function deleteCurrentGame() {
 	// TODO: add a 'are you sure, yes/no' thing. modal?
 }
 
-
-
 // Game stats functions ########################################################
 
-function latestGameStats() {	// TODO: should be a verb
+function getCurrentGameStats() {
 	console.log(`Date: ${currentGame().date}`)
 	console.log(`Team A: ${currentGame().teamAScore}`)
 	console.log(`Team B: ${currentGame().teamBScore}`)
@@ -525,15 +518,29 @@ function latestGameStats() {	// TODO: should be a verb
 	console.log(`Team B Players: ${currentGame().teamB}`)
 }
 
-// function displayLeagueStats(jsonData) {
-// 	// Leaderboard of active players, by leagueScore. If tie, by leagueGoalsScored/forfeit score?
-// 	// Games attended
-// 	// For manager: highlight low skill level but high score... indicator of incorrect skill score?
-// 	// Scores are emailed out to all active players.
-// }
+function getLeagueStats(jsonData) {
+	let players = jsonData.players.map(function(player) {
+		return {playerName: player.firstName + ' ' + player.lastName,
+				leagueScore: player.leagueScore,
+				leagueGoalsScored: player.leagueGoalsScored
+				}
+	})
+	players.sort(function(a, b) {
+		return b.leagueScore - a.leagueScore
+	})
+	$("#league-stats ul").html("")
+	players.forEach(function(player) {
+		$("#league-stats ul").append("<li>" + player.leagueScore + ' points: ' + player.playerName + " (Goals: " + player.leagueGoalsScored + ") </li>")
+		console.log(player.leagueScore + ': ' + player.playerName);
+	})
+
+	// FIXME: sorts and console.logs the leaderboard by leagueScore, but doesn't use jquery to put the info anywhere yet.
+	// IDEA: For manager: highlight low skill level but high score... indicator of incorrect skill score?
+	// IDEA: Scores are emailed out to all active players.
+}
 
 function displayRawData() {
-	document.write( localStorage.getItem('jsonData') );
+	document.write( localStorage.getItem(LOCAL_STORAGE_NAME) );
 }
 
 
@@ -544,10 +551,19 @@ function displayRawData() {
 $(document).ready(function(){
 
     getData()
+	getLeagueStats(jsonData)
 
-	// TODO make this into a 'recover state' type function that can be called in several places.
+	// hide the test data button if players object is populated
+	if ( jsonData.players.length > 0 ) {
+		$('.gen-test-data').addClass('hidden')
+	}
+
+	// TODO: make this into a 'recover state' type function that can be called in several places.
 	if ( localStorage.getItem(LOCAL_STORAGE_NAME) && currentGame() &&    !currentGame().hasOwnProperty('endTime') ) {
-		$('body p:first').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
+		$('.intro-para').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
+		$('.gen-test-data').addClass('hidden')
+		$('#select-players-button').addClass('hidden')
+		$('#new-player-button').addClass('hidden')
 		$('.intro-para').addClass('hidden')
 		$('.game-date').html(currentGame().date)
 		$('.game-date').removeClass('hidden')
@@ -580,6 +596,8 @@ $(document).ready(function(){
 // TODO: add bootstrap - it looks like shit on a phone in particular
 
 // TODO: allow adding a player once game is in progress. late players? maybe a dropdown of remaining unchosen players displayed whilst game is in progress.
+
+// TODO: add some font awesome icons to buttons
 
 // Data storage format:
 // jsonData = {
@@ -631,12 +649,6 @@ $(document).ready(function(){
 //   ]
 // }
 
-// const previousGameStats = [
-//
-// 	// All prior season's game stats saved here in a file?
-// 	// Read from file? and back to file?
-// ];
-
 // GUI click handler interface:
 // newPlayer();			// Add a player to the database
 //
@@ -664,7 +676,6 @@ $(document).ready(function(){
 // updateMoniesOwed();		// Update a money owed by the player
 //
 // newSeason();			// Archive off this season's data to another file and wipe this seasons data
-
 
 // learn testing: mocha
 //

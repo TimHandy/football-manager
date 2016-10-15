@@ -12,9 +12,9 @@
 	</head>
 	<body>
 		<div class="dev-tools">
-			<p>
+			<h6>
 				Developer Tools: This section will be hidden in the production app.
-			</p>
+			</h6>
 
 			<div class="gen-test-data">
 				<button onclick="genTestData()" type="button" name="button">Generate Test Players</button>
@@ -35,17 +35,20 @@
 
 		<h1>Football App</h1>
 		<p class="intro-para">
-			Generates two evenly matched random teams.<br>
+			Generates two evenly matched random teams: Select existing players or add players to the database first.<br>
 			Teams are evenly matched using each players' assigned skill rating.<br>
-			Stores game stats, including game date, teams, players, winning score, goal scorers.<br>
-			Stores players and their cumulative stats: total goals scored across the season and individual winning points (3 points for a win, 2 for a draw, 1 point for playing). <br>
+			Game stats are recorded, including game date, teams, players, winning score, goal scorers.<br>
+			Cumulative stats are recorded for each player: total goals scored across the season and individual winning points (3 points for a win, 2 for a draw, 1 point for playing). <br>
 			Reports by player league score and total goals to determine a season winner. <br>
 			Players can be charged a nominal fee for lateness to games, which is recorded until paid up.<br>
 			Data is stored in localStorage on the device and can be exported as raw JSON. <br /><br />
 			Alpha v0.1.
 		</p>
 
-		<button id="new-player-button" class="btn btn-default" onclick="toggleNewPlayer()" type="button" name="button">New Player</button>
+		<div class="">
+			<button id="new-player-button" class="btn btn-default" onclick="toggleNewPlayer()" type="button" name="button">Store New Player</button>
+		</div>
+
 
 		<div class="new-player-form hidden">
 			<p>
@@ -60,11 +63,11 @@
 			</form>
 		</div>
 
-		<button id="select-players-button" class="btn btn-success" onclick="displayAvailablePlayers()" type="button" name="button">Select Players for Game</button>
+		<button id="select-players-button" class="btn btn-success" onclick="displayAvailablePlayers()" type="button" name="button">Select Existing Players</button>
 
 		<div class="available-players hidden">
 			<p>
-				Select your available players
+				Select all players in attendance, then generate teams
 			</p>
 			<form id="select-players" class="">
 				<ul></ul>
@@ -91,12 +94,12 @@
 
 		<div class="game hidden">
 			<h3>Current Score</h3>
-			<p>
+			<h3>
 				Team A: <span class="team-a-score">0</span>
-			</p>
-			<p>
+			</h3>
+			<h3>
 				Team B: <span class="team-b-score">0</span>
-			</p>
+			</h3>
 		</div>
 
 		<div class="goal hidden">
@@ -131,6 +134,14 @@
 
 		<div class="delete-game hidden">
 			<button class="btn btn-danger" onclick="deleteCurrentGame()" type="button" name="button">Delete Game</button>
+		</div>
+
+		<div id="league-stats"class="">
+			<h3>
+				League Scores Leaderboard
+			</h3>
+			<ul>
+			</ul>
 		</div>
 
 
