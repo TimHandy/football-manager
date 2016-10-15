@@ -459,10 +459,13 @@ function assignWinningPoints(callback) {		// TODO: Looks ripe for refactoring
 	} else {
 		console.log("game end time not set")
 	}
+<<<<<<< HEAD
 
 	if (callback) {
 		callback()
 	}
+=======
+>>>>>>> 558df3691a41fa07de8b2dadf2e4f52af00406bc
 }
 
 function updatePlayerLeagueScore(firstName, lastName, points) {
@@ -477,10 +480,15 @@ function updatePlayerLeagueScore(firstName, lastName, points) {
 
 function finalWhistle() {		// FIXME: should be a verb
 	setGameEndTime()
+<<<<<<< HEAD
 	assignWinningPoints(function(){
 		getLeagueStats(jsonData)
 	})
 
+=======
+	assignWinningPoints()
+	getLeagueStats(jsonData)
+>>>>>>> 558df3691a41fa07de8b2dadf2e4f52af00406bc
 	$('.final-score').removeClass('hidden')
 	$('.final-score p:nth-of-type(1)').html("Team A: " + currentGame().teamAScore)
 	$('.final-score p:nth-of-type(2)').html("Team B: " + currentGame().teamBScore)
@@ -538,7 +546,6 @@ function getLeagueStats(jsonData) {
 	$("#league-stats ul").html("")
 	players.forEach(function(player) {
 		$("#league-stats ul").append("<li>" + player.leagueScore + ' points: ' + player.playerName + " (Goals: " + player.leagueGoalsScored + ") </li>")
-
 		console.log(player.leagueScore + ': ' + player.playerName);
 	})
 
@@ -560,7 +567,7 @@ function displayRawData() {
 $(document).ready(function(){
 
     getData()
-
+	getLeagueStats(jsonData)
 	if ( jsonData.players.length > 0 ) {
 		$('.gen-test-data').addClass('hidden')
 
