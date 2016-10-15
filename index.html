@@ -16,134 +16,137 @@
 				Developer Tools: This section will be hidden in the production app.
 			</h6>
 
-			<div class="gen-test-data">
-				<button onclick="genTestData()" type="button" name="button">Generate Test Players</button>
+			<div class="gen-test-data ">
+				<button class="btn btn-default btn-lg btn-block btn-huge" onclick="genTestData()" type="button" name="button">Generate Test Players</button>
 			</div>
 
 			<div class="">
-				<button onclick="consoleLogDb()"type="button" name="button">console.log (database)</button>
+				<button class="btn btn-default btn-lg btn-block btn-huge" onclick="consoleLogDb()"type="button" name="button">console.log (database)</button>
 			</div>
 
 			<div class="">
-				<button onclick="displayRawData()" type="button" name="button">Export Raw Data</button>
+				<button class="btn btn-default btn-lg btn-block btn-huge" onclick="displayRawData()" type="button" name="button">Export Raw Data</button>
 			</div>
 
 			<div class="">
-				<button onclick="deleteAllData()" type="button" name="button">Delete DB</button>
+				<button class="btn btn-default btn-lg btn-block btn-huge" onclick="deleteAllData()" type="button" name="button">Delete DB</button>
 			</div>
 		</div>
 
-		<h1>Football App</h1>
-		<p class="intro-para">
-			Generates two evenly matched random teams: Select existing players or add players to the database first.<br>
-			Teams are evenly matched using each players' assigned skill rating.<br>
-			Game stats are recorded, including game date, teams, players, winning score, goal scorers.<br>
-			Cumulative stats are recorded for each player: total goals scored across the season and individual winning points (3 points for a win, 2 for a draw, 1 point for playing). <br>
-			Reports by player league score and total goals to determine a season winner. <br>
-			Players can be charged a nominal fee for lateness to games, which is recorded until paid up.<br>
-			Data is stored in localStorage on the device and can be exported as raw JSON. <br /><br />
-			Alpha v0.1.
-		</p>
-
-		<div class="">
-			<button id="new-player-button" class="btn btn-default" onclick="toggleNewPlayer()" type="button" name="button">Store New Player</button>
-		</div>
-
-
-		<div class="new-player-form hidden">
-			<p>
-				All fields are required:
+		<div class="wrapper col-xs-12">
+			<h1>Football App</h1>
+			<p class="intro-para">
+				Generates two evenly matched random teams: Select existing players or add players to the database first.<br>
+				Teams are evenly matched using each players' assigned skill rating.<br>
+				Game stats are recorded, including game date, teams, players, winning score, goal scorers.<br>
+				Cumulative stats are recorded for each player: total goals scored across the season and individual winning points (3 points for a win, 2 for a draw, 1 point for playing). <br>
+				Reports by player league score and total goals to determine a season winner. <br>
+				Players can be charged a nominal fee for lateness to games, which is recorded until paid up.<br>
+				Data is stored in localStorage on the device and can be exported as raw JSON. <br /><br />
+				Alpha v0.1.
 			</p>
-			<form id="new-player" action="">
-				<input type="text" name="fname" value="First Name"><br>
-				<input type="text" name="lname" value="Last Name"><br>
-				<input type="text" name="email" value="Email"><br>
-				<input type="text" name="skill" value="Skill level (1-3)"><br>
-				<button class="btn btn-success" id="new-player-submit-button" onclick="newPlayerForm()" type="button" name="button">Submit</button>
-			</form>
-		</div>
 
-		<button id="select-players-button" class="btn btn-success" onclick="displayAvailablePlayers()" type="button" name="button">Select Existing Players</button>
+			<div class="">
+				<button id="new-player-button" class="btn btn-default btn-lg btn-block btn-huge" onclick="toggleNewPlayer()" type="button" name="button">Store New Player</button>
+			</div>
 
-		<div class="available-players hidden">
-			<p>
-				Select all players in attendance, then generate teams
-			</p>
-			<form id="select-players" class="">
-				<ul></ul>
-			</form>
-		</div>
 
-		<div class="generate-teams hidden">
-			<button class="btn btn-success" onclick="wrapperforGenerateTeams()" type="button" name="button">Generate Teams</button>
-		</div>
-		<div class="game-date hidden">
-			<h3>Game: <span>Date</span></h3>
-		</div>
-
-		<div class="players hidden">
-			<h3>Team A</h3>
-			<p id='team-a'></p>
-			<h3>Team B</h3>
-			<p id='team-b'></p>
-		</div>
-
-		<div class="kickoff hidden">
-			<button class="btn btn-success" onclick="kickOff()" type="button" name="button">Kickoff</button>
-		</div>
-
-		<div class="game hidden">
-			<h3>Current Score</h3>
-			<h3>
-				Team A: <span class="team-a-score">0</span>
-			</h3>
-			<h3>
-				Team B: <span class="team-b-score">0</span>
-			</h3>
-		</div>
-
-		<div class="goal hidden">
-			<div class="col-xs-9">
-				<form id="goal" class="">
-					<select class="form-control" id="dropdown-options" name="goalscorer">
-						<option>Player Name</option>
-					</select>
-
+			<div class="new-player-form hidden ">
+				<p>
+					All fields are required:
+				</p>
+				<form id="new-player" action="">
+					<input type="text" name="fname" value="First Name"><br>
+					<input type="text" name="lname" value="Last Name"><br>
+					<input type="text" name="email" value="Email"><br>
+					<input type="text" name="skill" value="Skill level (1-3)"><br>
+					<button class="btn btn-success btn-lg btn-block btn-huge" id="new-player-submit-button" onclick="newPlayerForm()" type="button" name="button">Submit</button>
 				</form>
 			</div>
-			<button class="btn btn-success" onclick="goalButton()" type="button" name="button">Goal</button>
-		</div>
+			<div class="">
+				<button id="select-players-button" class="btn btn-success btn-lg btn-block btn-huge" onclick="displayAvailablePlayers()" type="button" name="button">Select Existing Players</button>
+			</div>
 
-		<div class="final-whistle hidden">
-			<button class="btn btn-primary" onclick="finalWhistle()" type="button" name="button">Final Whistle</button>
-		</div>
+			<div class="available-players hidden ">
+				<p>
+					Select all players in attendance, then generate teams
+				</p>
+				<form id="select-players" class="">
+					<ul></ul>
+				</form>
+			</div>
 
-		<div class="final-score hidden">
-			<h3>Final Score</h3>
-			<p>
-				Team A: <span class="team-a-score">0</span>
-			</p>
-			<p>
-				Team B: <span class="team-b-score">0</span>
-			</p>
-		</div>
+			<div class="generate-teams hidden">
+				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="wrapperforGenerateTeams()" type="button" name="button">Generate Teams</button>
+			</div>
+			<div class="game-date-div hidden">
+				<p>Game: <span class="game-date">Date</span></p>
+			</div>
 
-		<div class="back">
-			<button id="back-button" class="btn btn-default" onclick="back()" type="button" name="button">Back</button>
-		</div>
+			<div class="players hidden ">
+				<h3>Team A</h3>
+				<p id='team-a'></p>
+				<h3>Team B</h3>
+				<p id='team-b'></p>
+			</div>
 
-		<div class="delete-game hidden">
-			<button class="btn btn-danger" onclick="deleteCurrentGame()" type="button" name="button">Delete Game</button>
-		</div>
+			<div class="kickoff hidden ">
+				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="kickOff()" type="button" name="button">Kickoff</button>
+			</div>
 
-		<div id="league-stats" class="hidden">
-			<h3>
-				League Scores Leaderboard
-			</h3>
-			<ul>
-			</ul>
-		</div>
+			<div class="game hidden ">
+				<h3>Current Score</h3>
+				<h3>
+					Team A: <span class="team-a-score">0</span>
+				</h3>
+				<h3>
+					Team B: <span class="team-b-score">0</span>
+				</h3>
+			</div>
 
+			<div class="goal hidden ">
+				<div class="">
+					<form id="goal" class="">
+						<select class="form-control input-lg" id="dropdown-options" name="goalscorer">
+							<option>Player Name</option>
+						</select>
+						<!-- TODO: not sure a form-control is the best thing for a drop down?? -->
+
+					</form>
+				</div>
+				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="goalButton()" type="button" name="button">Goal</button>
+			</div>
+
+			<div class="final-whistle hidden ">
+				<button class="btn btn-primary btn-lg btn-block btn-huge" onclick="finalWhistle()" type="button" name="button">Final Whistle</button>
+			</div>
+
+			<div class="final-score hidden ">
+				<h3>Final Score</h3>
+				<p>
+					Team A: <span class="team-a-score">0</span>
+				</p>
+				<p>
+					Team B: <span class="team-b-score">0</span>
+				</p>
+			</div>
+
+			<div class="">
+				<button id="back-button" class="btn btn-default btn-lg btn-block btn-huge" onclick="back()" type="button" name="button">Back</button>
+			</div>
+
+			<div class="delete-game hidden ">
+				<button class="btn btn-danger btn-lg btn-block btn-huge" onclick="deleteCurrentGame()" type="button" name="button">Delete Game</button>
+			</div>
+
+			<div id="league-stats" class="hidden">
+				<h1>
+					League Scores Leaderboard
+				</h1>
+				<ul>
+				</ul>
+			</div>
+	</div>
 
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>

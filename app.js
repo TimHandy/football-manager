@@ -329,13 +329,14 @@ function kickOff() {
 	generateGame(teamA, teamB)
 	populatePlayerDropdown(teamA.concat(teamB))
 	$('.game-date').html(currentGame().date)
-	$('.game-date').removeClass('hidden')
+	$('.game-date-div').removeClass('hidden')
 	$('.game').removeClass('hidden')
 	$('.goal').removeClass('hidden')
 	$('.final-whistle').removeClass('hidden')
 	$('.kickoff').addClass('hidden')
 	$('.generate-teams').addClass('hidden')
 	$('.delete-game').removeClass('hidden')
+	$('#back-button').addClass('hidden')
 }
 
 function populatePlayerDropdown(playerNamesArr) {
@@ -489,6 +490,7 @@ function finalWhistle() {		// FIXME: should be a verb
 	$('.goal').addClass('hidden')
 	$('.final-whistle').addClass('hidden')
 	$('.game').addClass('hidden')
+	$('#back-button').addClass('hidden')
 	$('#back-button').addClass('btn-primary').removeClass('btn-default')
 	//$('.delete-game').addClass('hidden')
 
@@ -578,7 +580,7 @@ $(document).ready(function(){
 		$('#new-player-button').addClass('hidden')
 		$('.intro-para').addClass('hidden')
 		$('.game-date').html(currentGame().date)
-		$('.game-date').removeClass('hidden')
+		$('.game-date-div').removeClass('hidden')
 		$('.players').removeClass('hidden')
 		$('.available-players').addClass('hidden')
 		$('.new-player-form').addClass('hidden')
@@ -597,9 +599,11 @@ $(document).ready(function(){
 		$('.team-a-score').html(currentGame().teamAScore)
 		$('.team-b-score').html(currentGame().teamBScore)
 		$('.delete-game').removeClass('hidden')
+		$('#back-button').addClass('hidden')
 		populatePlayerDropdown( currentGame().teamA.concat(currentGame().teamB) )
 	} else {
 		//$('.gen-test-data').removeClass('hidden')
+		$('#back-button').addClass('hidden')
 	}
 
 });

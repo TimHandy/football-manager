@@ -18,4 +18,33 @@
 
 li{
 	list-style-type: none;
+	font-size: 3em;
+}
+
+h1{
+	font-size: 60px;
+}
+
+h3{
+	font-size: 50px;
+}
+
+
+p{
+	font-size: 40px;
+}
+
+input[type=checkbox] {
+    zoom: 3;
+}
+
+.btn-huge{
+    padding-top:20px;
+    padding-bottom:20px;
+}
+
+.wrapper button {
+	margin-top: 40px;
+	margin-bottom: 40px;
+	font-size: 5em;
 }
