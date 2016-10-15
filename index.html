@@ -3,7 +3,11 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Football App</title>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 		<link rel="stylesheet" href="styles.css" media="screen" title="no title">
 	</head>
 	<body>
@@ -41,32 +45,34 @@
 			Alpha v0.1.
 		</p>
 
-		<div class="new-player">
-			<button onclick="toggleNewPlayer()" type="button" name="button">New Player</button>
+		<button id="new-player-button" class="btn btn-default" onclick="toggleNewPlayer()" type="button" name="button">New Player</button>
 
-			<div class="new-player-form hidden">
-				<p>
-					All fields are required:
-				</p>
-				<form id="new-player" action="">
-  					<input type="text" name="fname" value="First Name"><br>
-					<input type="text" name="lname" value="Last Name"><br>
-					<input type="text" name="email" value="Email"><br>
-					<input type="text" name="skill" value="Skill level (1-3)"><br>
-					<button onclick="newPlayerForm()" type="button" name="button">Submit</button>
-				</form>
-			</div>
+		<div class="new-player-form hidden">
+			<p>
+				All fields are required:
+			</p>
+			<form id="new-player" action="">
+				<input type="text" name="fname" value="First Name"><br>
+				<input type="text" name="lname" value="Last Name"><br>
+				<input type="text" name="email" value="Email"><br>
+				<input type="text" name="skill" value="Skill level (1-3)"><br>
+				<button class="btn btn-success" id="new-player-submit-button" onclick="newPlayerForm()" type="button" name="button">Submit</button>
+			</form>
 		</div>
-		<div class="select-players">
-			<button onclick="displayAvailablePlayers()" type="button" name="button">Select Players for Game</button>
-			<div class="list-players">
-				<form id="select-players" class="">
-					<ul></ul>
-				</form>
-			</div>
+
+		<button id="select-players-button" class="btn btn-success" onclick="displayAvailablePlayers()" type="button" name="button">Select Players for Game</button>
+
+		<div class="available-players hidden">
+			<p>
+				Select your available players
+			</p>
+			<form id="select-players" class="">
+				<ul></ul>
+			</form>
 		</div>
-		<div class="generate-teams">
-			<button onclick="wrapperforGenerateTeams()" type="button" name="button">Generate Teams</button>
+
+		<div class="generate-teams hidden">
+			<button class="btn btn-success" onclick="wrapperforGenerateTeams()" type="button" name="button">Generate Teams</button>
 		</div>
 		<div class="game-date hidden">
 			<h3>Game: <span>Date</span></h3>
@@ -80,7 +86,7 @@
 		</div>
 
 		<div class="kickoff hidden">
-			<button onclick="kickOff()" type="button" name="button">Kickoff</button>
+			<button class="btn btn-success" onclick="kickOff()" type="button" name="button">Kickoff</button>
 		</div>
 
 		<div class="game hidden">
@@ -94,16 +100,19 @@
 		</div>
 
 		<div class="goal hidden">
-			<form id="goal" class="">
-				<select id="dropdown-options" class="" name="goalscorer">
-					<option>Player Name</option>
-				</select>
-				<button onclick="goalButton()" type="button" name="button">Goal</button>
-			</form>
+			<div class="col-xs-9">
+				<form id="goal" class="">
+					<select class="form-control" id="dropdown-options" name="goalscorer">
+						<option>Player Name</option>
+					</select>
+
+				</form>
+			</div>
+			<button class="btn btn-success" onclick="goalButton()" type="button" name="button">Goal</button>
 		</div>
 
 		<div class="final-whistle hidden">
-			<button onclick="finalWhistle()" type="button" name="button">Final Whistle</button>
+			<button class="btn btn-primary" onclick="finalWhistle()" type="button" name="button">Final Whistle</button>
 		</div>
 
 		<div class="final-score hidden">
@@ -117,14 +126,20 @@
 		</div>
 
 		<div class="back">
-			<button onclick="back()" type="button" name="button">Back</button>
+			<button id="back-button" class="btn btn-default" onclick="back()" type="button" name="button">Back</button>
 		</div>
 
 		<div class="delete-game hidden">
-			<button onclick="deleteCurrentGame()" type="button" name="button">Delete Game</button>
+			<button class="btn btn-danger" onclick="deleteCurrentGame()" type="button" name="button">Delete Game</button>
 		</div>
 
+
+
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
 		<script src="app.js"></script>
 
 

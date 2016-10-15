@@ -73,8 +73,10 @@ function consoleLogDb() {
 }
 
 function toggleNewPlayer() {
-	$('.new-player-form').slideToggle(200)
+	$('.new-player-form').removeClass('hidden')
 	$('.intro-para').addClass('hidden')
+	$('#new-player-button').addClass('hidden')
+	$('#select-players-button').addClass('hidden')
 }
 
 function genTestData() {	// Just for testing
@@ -235,9 +237,13 @@ function displayAvailablePlayers() {
 	let list = $('#select-players ul')
 	$(list).html("")
 	players.forEach(function(player) {
-		$(list).append('<li><input type="checkbox" name="player" value="' + player + '">' + player + '</li>')
+		$(list).append('<li><input type="checkbox" name="player" value="' + player + '"> ' + player + '</li>')
 	})
 	$('.intro-para').addClass('hidden')
+	$('.available-players').removeClass('hidden')
+	$('.generate-teams').removeClass('hidden')
+	$('#select-players-button').addClass('hidden')
+	$('#new-player-button').addClass('hidden')
 	// TODO append in name order
 }
 
@@ -300,8 +306,8 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 	$('.generate-teams').addClass('hidden')
 	$('.kickoff').removeClass('hidden')
 	$('.players').removeClass('hidden')
-	$('.select-players').addClass('hidden')
-	$('.new-player').addClass('hidden')
+	$('.available-players').addClass('hidden')
+	$('.new-player-form').addClass('hidden')
 
 	// saveData()
 
@@ -363,6 +369,8 @@ function goalButton() {
 	let firstName = player.split(' ')[0]
 	let lastName = player.split(' ')[1]
 	goalScored(firstName, lastName)
+	// TODO: validation: must choose a player. 'Player Name' should not be valid
+	// TODO: set dropdown back to 'Player Name' after valid goal button press
 }
 
 
@@ -476,7 +484,8 @@ function finalWhistle() {
 	$('.goal').addClass('hidden')
 	$('.final-whistle').addClass('hidden')
 	$('.game').addClass('hidden')
-	$('.delete-game').addClass('hidden')
+	$('#back-button').addClass('btn-primary').removeClass('btn-default')
+	//$('.delete-game').addClass('hidden')
 
 	// Output match stats to display? Winning team (goals scored in game)
 	// Output top goal scorer
@@ -497,6 +506,7 @@ function deleteCurrentGame() {
 	location.reload();		// <= this is a page reload
 	saveData()
 	// TODO: this should remove any scores added to players scores
+	// TODO: add a 'are you sure, yes/no' thing. modal?
 }
 
 
@@ -545,8 +555,8 @@ $(document).ready(function(){
 		$('.game-date').html(currentGame().date)
 		$('.game-date').removeClass('hidden')
 		$('.players').removeClass('hidden')
-		$('.select-players').addClass('hidden')
-		$('.new-player').addClass('hidden')
+		$('.available-players').addClass('hidden')
+		$('.new-player-form').addClass('hidden')
 		$('.game span').html(currentGame().date)
 		$('.game').removeClass('hidden')
 		$('.goal').removeClass('hidden')

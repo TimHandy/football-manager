@@ -17,6 +17,10 @@
 	}
 
 button {
-	height: 50px;
-	width: 120px;
+	/*height: 50px;
+	width: 120px;*/
+}
+
+li{
+	list-style-type: none;
 }
