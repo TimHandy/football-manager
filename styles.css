@@ -7,7 +7,7 @@
 }
 
 .dev-tools{
-	border: solid 1px red;
+	border: solid 2px grey;
 	margin-bottom: 50px;
 	/*display:none;*/
 }
@@ -15,11 +15,6 @@
 		height: auto;
 		width: auto;
 	}
-
-button {
-	/*height: 50px;
-	width: 120px;*/
-}
 
 li{
 	list-style-type: none;
