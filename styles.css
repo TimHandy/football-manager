@@ -35,7 +35,11 @@ p{
 }
 
 input[type=checkbox] {
-    zoom: 3;
+    zoom: 5;
+    font-size: 10px;
+	font-size: 40px;
+	vertical-align: middle;
+	margin-top: 0;
 }
 
 .btn-huge{
@@ -47,4 +51,14 @@ input[type=checkbox] {
 	margin-top: 40px;
 	margin-bottom: 40px;
 	font-size: 5em;
+}
+
+.input-lg {
+    height: 80px;
+    font-size: 40px;
+}
+
+.form-control{
+	height: 100px;
+	font-size: 50px;
 }

@@ -35,7 +35,7 @@
 
 		<div class="wrapper col-xs-12">
 			<h1>Football App</h1>
-			<p class="intro-para">
+			<p class="intro-para hidden">
 				Generates two evenly matched random teams: Select existing players or add players to the database first.<br>
 				Teams are evenly matched using each players' assigned skill rating.<br>
 				Game stats are recorded, including game date, teams, players, winning score, goal scorers.<br>
@@ -51,17 +51,21 @@
 			</div>
 
 
-			<div class="new-player-form hidden ">
-				<p>
+			<div class="new-player-form hidden">
+				<h3>
 					All fields are required:
-				</p>
-				<form id="new-player" action="">
-					<input type="text" name="fname" value="First Name"><br>
-					<input type="text" name="lname" value="Last Name"><br>
-					<input type="text" name="email" value="Email"><br>
-					<input type="text" name="skill" value="Skill level (1-3)"><br>
-					<button class="btn btn-success btn-lg btn-block btn-huge" id="new-player-submit-button" onclick="newPlayerForm()" type="button" name="button">Submit</button>
+				</h3>
+				<form  id="new-player" action="">
+					<input class="input-lg" type="text" name="fname" value="First Name"><br>
+					<input class="input-lg" type="text" name="lname" value="Last Name"><br>
+					<input class="input-lg" type="text" name="email" value="Email"><br>
+					<input class="input-lg" type="text" name="skill" value="Skill level (1-3)"><br>
+					<div id="user-input-error" class="hidden">
+						<h3></h3>
+					</div>
+					<button class="btn btn-success btn-lg btn-block btn-huge" id="new-player-submit-button" onclick="createNewPlayerFromForm()" type="button" name="button">Submit</button>
 				</form>
+
 			</div>
 			<div class="">
 				<button id="select-players-button" class="btn btn-success btn-lg btn-block btn-huge" onclick="displayAvailablePlayers()" type="button" name="button">Select Existing Players</button>
@@ -107,14 +111,14 @@
 			<div class="goal hidden ">
 				<div class="">
 					<form id="goal" class="">
-						<select class="form-control input-lg" id="dropdown-options" name="goalscorer">
+						<select class="form-control" id="dropdown-options" name="goalscorer">
 							<option>Player Name</option>
 						</select>
 						<!-- TODO: not sure a form-control is the best thing for a drop down?? -->
 
 					</form>
 				</div>
-				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="goalButton()" type="button" name="button">Goal</button>
+				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="goalHandler()" type="button" name="button">Goal</button>
 			</div>
 
 			<div class="final-whistle hidden ">

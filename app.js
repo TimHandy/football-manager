@@ -98,17 +98,17 @@ function consoleLogDb() {
 }
 
 function genTestData() {	// Just for testing
-	newPlayer('Tim', 'Handy', 'tim@tim.com', 2)
-	newPlayer('Jade', 'Andrews', 'jade@jade.com', 1)
-	newPlayer('Sarah', 'Connop', 'sarah@sarah.com', 1)
-	newPlayer('Jane', 'Doe', 'jane@jane.com', 2)
-	newPlayer('Chris', 'Rollins', 'chris@chris.com', 1)
-	newPlayer('Diego', 'Maradona', 'diego@diego.com', 3)
-	newPlayer('David', 'Beckham', 'becks@becks.com', 3)
-	newPlayer('Misako', 'Cedeira', 'misako@mis.com', 1)
-	newPlayer('Karl', 'Cedeira', 'karl@cedeira.com', 2)
-	newPlayer('Leah', 'Andrews', 'leah@andrews.com', 1)
-	newPlayer('Damo', 'Connop', 'damo@wolves.com', 3)
+	createNewPlayer('Tim', 'Handy', 'tim@tim.com', 2)
+	createNewPlayer('Jade', 'Andrews', 'jade@jade.com', 1)
+	createNewPlayer('Sarah', 'Connop', 'sarah@sarah.com', 1)
+	createNewPlayer('Jane', 'Doe', 'jane@jane.com', 2)
+	createNewPlayer('Chris', 'Rollins', 'chris@chris.com', 1)
+	createNewPlayer('Diego', 'Maradona', 'diego@diego.com', 3)
+	createNewPlayer('David', 'Beckham', 'becks@becks.com', 3)
+	createNewPlayer('Misako', 'Cedeira', 'misako@mis.com', 1)
+	createNewPlayer('Karl', 'Cedeira', 'karl@cedeira.com', 2)
+	createNewPlayer('Leah', 'Andrews', 'leah@andrews.com', 1)
+	createNewPlayer('Damo', 'Connop', 'damo@wolves.com', 3)
 
 	// generateTeams(demoPlayers, function () {
 	// 	generateGame(teamA, teamB)
@@ -126,7 +126,7 @@ function capitalizeFirstLetter(string) {
 // End Helper functions ########################################################
 
 
-function newPlayer(firstName, lastName, email, skillLevel) {		// FIXME: this is a noun, should be a verb
+function createNewPlayer(firstName, lastName, email, skillLevel) {
 	let obj = {
 		created: Date.now(),		// TODO: should this be human readable? Probably
 		firstName: firstName,		// FIXME: name and email should be mandatory
@@ -146,38 +146,64 @@ function newPlayer(firstName, lastName, email, skillLevel) {		// FIXME: this is 
 	$('.intro-para').addClass('hidden')
 	saveData()
 }
-// TODO: there is a newPlayer and a newPlayerForm function?
+// TODO: there is a createNewPlayer and a newPlayerForm function?
 
 function toggleNewPlayer() { // TODO: what does this do? should it be elsewhere?
 	$('.new-player-form').removeClass('hidden')
 	$('.intro-para').addClass('hidden')
 	$('#new-player-button').addClass('hidden')
 	$('#select-players-button').addClass('hidden')
+	$('#back-button').removeClass('hidden')
 }
 
-function newPlayerForm() {		// FIXME: this is a noun, should be a verb
+function createNewPlayerFromForm() {
+	$('#back-button').removeClass('hidden')
+
 	let form = document.getElementById('new-player')
-	let firstName = capitalizeFirstLetter(form.fname.value)
-	let lastName = capitalizeFirstLetter(form.lname.value)
+	let firstName = capitalizeFirstLetter( form.fname.value.trim() )
+	let lastName = capitalizeFirstLetter( form.lname.value.trim() )
 	let email = form.email.value.toLowerCase()
 	let skillLevel = parseInt(form.skill.value)
-	// FIXME: validations on names and skill entries
-		//FIXME: valid email address
-		//FIXME: email address is mandatory
-		//FIXME: email can't already exist in database
-		//FIXME: valid skill level: integer 1-3
-		//FIXME: skill level is mandatory
-		//FIXME: must have a first name
-		//FIXME: firstname can't be 'first name'
-		//FIXME: firstname is mandatory
-		//FIXME: must have a last name
-		//FIXME: lastname can't be 'last name'
-		//FIXME: lastname is mandatory
-		//FIXME: email address, firstName, and lastname combo can't be in the database
-
-	newPlayer(firstName, lastName, email, skillLevel)
-
+	if ( firstName === "First name" || firstName === "" ) {
+		let msg = 'First Name is required'
+		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
+		return
+	} else if ( lastName === "Last name" || lastName === "" ) {
+		let msg = 'Last Name is required'
+		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
+		return
+	} else if ( fullNameExists(firstName, lastName) ) {
+		let msg = 'Player name already exists'
+		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
+	} else if ( email === "email" || emailExists(email) || !validateEmail(email || email === "") ) {
+		let msg = 'A valid email address is required. Email must not be a duplicate.'
+		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
+		return
+	} else if ( skillLevel === "Skill level (1-3)" || !(skillLevel > 0 && skillLevel < 4) ) {
+		let msg = 'Skill level is required'
+		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
+		return
+	} else {
+		createNewPlayer(firstName, lastName, email, skillLevel)
+		$('#user-input-error').addClass('hidden')
+		$('#user-input-error').html('<h3>'+'Player added successfully'+'</h3>').removeClass('hidden')
+	}
 	// FIXME: notify user of success/fail on adding a new player
+}
+
+function emailExists(email) {
+	return jsonData.players.some(function(player){return player.email === email})
+}
+
+function fullNameExists(firstName, lastName) {
+	return jsonData.players.some(function(player){return player.firstName === firstName && player.lastName === lastName})
+}
+
+
+
+function validateEmail(email) {
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
 }
 
 function retirePlayerToggle(firstName, lastName) {
@@ -247,6 +273,7 @@ function displayAvailablePlayers() {
 	$('.generate-teams').removeClass('hidden')
 	$('#select-players-button').addClass('hidden')
 	$('#new-player-button').addClass('hidden')
+	$('#back-button').removeClass('hidden')
 }
 
 let chosenPlayers = []	// TODO: dirty global variable, refactor to remove
@@ -301,10 +328,19 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 	console.log('Team B: ', teamB)
 
 	$('#team-a').html(teamA.map(function(name) {
-		return name + ', '		// FIXME: don't want a comma if it's the last element! maybe a for loop while i < arr.length -1 might do it.
+		if (teamA.indexOf(name) === teamA.length - 1) {
+			return name
+		} else {
+			return name + ', '
+		}
 	}))
+
 	$('#team-b').html(teamB.map(function(name) {
-		return name + ', '
+		if (teamB.indexOf(name) === teamB.length - 1) {
+			return name
+		} else {
+			return name + ', '
+		}
 	}))
 	$('.intro-para').addClass('hidden')
 	$('.generate-teams').addClass('hidden')
@@ -363,7 +399,7 @@ function generateGame(teamA, teamB) {
 	saveData()
 }
 
-function goalButton() {  // FIXME: should be a verb
+function goalHandler() {
 	let dropdown = document.getElementById( 'dropdown-options' );
 	let player = dropdown.options[ dropdown.selectedIndex ].value
 	let firstName = player.split(' ')[0]
@@ -373,7 +409,7 @@ function goalButton() {  // FIXME: should be a verb
 	// TODO: set dropdown back to 'Player Name' after valid goal button press
 }
 
-function goalScored(firstName, lastName) {	// FIXME: should be a verb
+function goalScored(firstName, lastName) {
 	if ( !currentGame().endTime ) {
 		currentGame().scorers.push(firstName + " " + lastName)
 		console.log('Scorer: ' + firstName + " " + lastName + ' added')
@@ -477,7 +513,7 @@ function updatePlayerLeagueScore(firstName, lastName, points) {
 	saveData()
 }
 
-function finalWhistle() {		// FIXME: should be a verb
+function finalWhistle() {
 	setGameEndTime()
 	assignWinningPoints(function(){
 		getLeagueStats(jsonData)
@@ -490,7 +526,7 @@ function finalWhistle() {		// FIXME: should be a verb
 	$('.goal').addClass('hidden')
 	$('.final-whistle').addClass('hidden')
 	$('.game').addClass('hidden')
-	$('#back-button').addClass('hidden')
+	$('#back-button').removeClass('hidden')
 	$('#back-button').addClass('btn-primary').removeClass('btn-default')
 	//$('.delete-game').addClass('hidden')
 
@@ -540,7 +576,9 @@ function getLeagueStats(jsonData) {
 	$("#league-stats").removeClass('hidden')
 	$("#league-stats ul").html("")
 	players.forEach(function(player) {
-		$("#league-stats ul").append("<li>" + player.leagueScore + ' points: ' + player.playerName + " (Goals: " + player.leagueGoalsScored + ") </li>")
+		if (player.leagueScore > 0 || player.leagueGoalsScored > 0) {
+			$("#league-stats ul").append("<li>" + player.leagueScore + ' points: ' + player.playerName + " (Goals: " + player.leagueGoalsScored + ") </li>")
+		}
 		console.log(player.leagueScore + ': ' + player.playerName);
 	})
 
@@ -666,7 +704,7 @@ $(document).ready(function(){
 // }
 
 // GUI click handler interface:
-// newPlayer();			// Add a player to the database
+// createNewPlayer();			// Add a player to the database
 //
 // editPlayer();			// Edit an existing player
 //
