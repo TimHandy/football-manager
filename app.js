@@ -160,8 +160,8 @@ function createNewPlayerFromForm() {
 	$('#back-button').removeClass('hidden')
 
 	let form = document.getElementById('new-player')
-	let firstName = capitalizeFirstLetter( form.fname.value.trim() )
-	let lastName = capitalizeFirstLetter( form.lname.value.trim() )
+	let firstName = capitalizeFirstLetter( form.fname.value.trim().split(' ').join('') )
+	let lastName = capitalizeFirstLetter( form.lname.value.trim().split(' ').join('') )
 	let email = form.email.value.toLowerCase()
 	let skillLevel = parseInt(form.skill.value)
 	if ( firstName === "First name" || firstName === "" ) {
