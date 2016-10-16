@@ -164,11 +164,11 @@ function createNewPlayerFromForm() {
 	let lastName = capitalizeFirstLetter( form.lname.value.trim().split(' ').join('') )
 	let email = form.email.value.toLowerCase()
 	let skillLevel = parseInt(form.skill.value)
-	if ( firstName === "First name" || firstName === "" ) {
+	if ( firstName === "Firstname" || firstName === "" ) {
 		let msg = 'First Name is required'
 		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
 		return
-	} else if ( lastName === "Last name" || lastName === "" ) {
+	} else if ( lastName === "Lastname" || lastName === "" ) {
 		let msg = 'Last Name is required'
 		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
 		return
