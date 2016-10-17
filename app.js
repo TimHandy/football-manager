@@ -264,9 +264,11 @@ function displayAvailablePlayers() {
 	// generate an li for each player in players
 	let players = justNames(jsonData.players).sort()	// ['Tim Handy', 'Jade Andrews']
 	let list = $('#select-players ul')
+	let template = $('#players-template').html()
 	$(list).html("")
 	players.forEach(function(player) {
-		$(list).append('<li><input type="checkbox" name="player" value="' + player + '"> ' + player + '</li>')
+		$(list).append( Mustache.render(template, player) )
+		// FIXME: Mustache: why does this render a load of spaces/tabs? and a newline in the html? see inspect on one of the li elements.
 	})
 	$('.intro-para').addClass('hidden')
 	$('.available-players').removeClass('hidden')
