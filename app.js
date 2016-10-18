@@ -229,12 +229,15 @@ function setSkillLevel(firstName, lastName, skillLevel) {
 	saveData()
 }
 
+function editPlayer() {
+	// TODO: or just do it from a view of player data? Drop down for player to display their info, then edit required fields and save back to the DB in one go.
+}
+
 function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus or minus £/$
 	// update jsonData moniesOwed field
 	findPlayerByName(firstName, lastName).moniesOwed += currencyValue
 	saveData()
 }
-
 
 // function newSeason() {	//TODO: write this newSeason function
 // 	// Archive off this season's data (previousGameStats and jsonData to another file) then wipe
@@ -296,11 +299,13 @@ function choosePlayers() {
 	// TODO: seems to be a lot going on with variables of chosenPlayers without being saved to storage, maybe chosen players should be stored early on?
 }
 
-
+// TODO: this is a massive function. Is this wrong?
+// QUESTION: Should the click handler functions be named xxxxHandler so it can be seen that they have an event related to them?
 function generateTeams(chosenPlayers, callback) {  // pass in an array of player OBJECTS... callback is used in genTestData
 	teamA = [];
 	teamB = [];
-	let players = chosenPlayers.slice(0)		// make a copy of chosenPlayers  ['Tim Handy', 'Jade Andrews']
+	let players = chosenPlayers.slice(0)		// QUESTION: makes a copy of chosenPlayers  ['Tim Handy', 'Jade Andrews']. Is this the right thing to do so as to not mutate the original array?
+	// TODO: validate the generateTeams button, there must be > 1 players selected
 
 	let threeStarPlayers = shuffle( justNames( findPlayersBySkillLevel(players, 3) ) )  // ['David Beckham', 'Diego Maradonna']. TODO Think I've just created objects (choosePlayers) from strings and then back again to strings in here!
 	let twoStarPlayers = shuffle( justNames( findPlayersBySkillLevel(players, 2) ) )
@@ -311,7 +316,7 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 
 	while (lineUp.length > 0) {
 		teamA.push( lineUp.pop() )
-		teamB.push( lineUp.pop() )	// TODO: does this need to be a callback so that it does it in order?
+		teamB.push( lineUp.pop() )	// TODO: does this need to be a callback so that it does it in order? Not sure why it seems to do it ok... because it's a quick operation?
 	}
 
 	teamB = teamB.filter(Boolean)	// remove an 'undefined' from teamB if uneven number of players.
@@ -327,7 +332,7 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 	console.log('Team A: ', teamA)
 	console.log('Team B: ', teamB)
 
-	$('#team-a').html(teamA.map(function(name) {
+	$('#team-a').html(teamA.map(function(name) {		// TODO: this is mixing view code with the model code. Bad? Maybe should have an updateTeamView function or something?
 		if (teamA.indexOf(name) === teamA.length - 1) {
 			return name
 		} else {
@@ -335,28 +340,25 @@ function generateTeams(chosenPlayers, callback) {  // pass in an array of player
 		}
 	}))
 
-	$('#team-b').html(teamB.map(function(name) {
+	$('#team-b').html(teamB.map(function(name) {		// TODO: this is doing same as above, so DRY it up?
 		if (teamB.indexOf(name) === teamB.length - 1) {
 			return name
 		} else {
 			return name + ', '
 		}
 	}))
-	$('.intro-para').addClass('hidden')
+	$('.intro-para').addClass('hidden')		// TODO: should this all be wrapped up in a function?
 	$('.generate-teams').addClass('hidden')
 	$('.kickoff').removeClass('hidden')
 	$('.players').removeClass('hidden')
 	$('.available-players').addClass('hidden')
 	$('.new-player-form').addClass('hidden')
 
-	// saveData()
-
-	// TODO: validate the generateTeams button, there must be > 1 players selected
+	// saveData()		// don't need to save here, not necessary until the 'Kickoff' button pressed?
 }
 
-function wrapperforGenerateTeams() {	//TODO this is shitty having to make a wrapper. it's also a noun, not a verb.
-	// choosePlayers()
-	generateTeams(choosePlayers())
+function wrapperforGenerateTeams() {	// TODO: this is shitty having to make a wrapper. it's also a noun, not a verb.
+	generateTeams(choosePlayers())	// TODO: can I put this directly into the click handler?
 }
 
 // Game-time  ##################################################################
@@ -392,7 +394,7 @@ function generateGame(teamA, teamB) {
 		teamAScore: 0,
 		teamBScore: 0,
 		scorers: [],	// ['Tim Handy', 'Jade Andrews', 'Karl Cedeira']  order in which goals were scored
-		endTime: undefined   // TODO: undefined or null?? which is most appropriate?
+		endTime: undefined   // TODO: undefined or null?? which is most appropriate? Think undefined is for properties and vals, and null is for objects.
 	}
 
 	jsonData.games.push(game)
@@ -400,33 +402,30 @@ function generateGame(teamA, teamB) {
 }
 
 function goalHandler() {
-	let dropdown = document.getElementById( 'dropdown-options' );
+	let dropdown = document.getElementById( 'dropdown-options' );		// QUESTION: is there a better way to do a dropdown here?
 	let player = dropdown.options[ dropdown.selectedIndex ].value
 	let firstName = player.split(' ')[0]
 	let lastName = player.split(' ')[1]
 	goalScored(firstName, lastName)
-	// TODO: validation: must choose a player. 'Player Name' should not be valid
+	// TODO: validation: must choose a real player. 'Player Name' should not be a valid choice.
 	// TODO: set dropdown back to 'Player Name' after valid goal button press
+	// TODO: make the dropdown more visible; background color?
 }
 
 function goalScored(firstName, lastName) {
 	if ( !currentGame().endTime ) {
 		currentGame().scorers.push(firstName + " " + lastName)
 		console.log('Scorer: ' + firstName + " " + lastName + ' added')
-		updatePlayerLeagueGoalsScored(firstName, lastName, 1)	// should only be added at final whistle in case game is cancelled
+		updatePlayerLeagueGoalsScored(firstName, lastName, 1)	// TODO: should only be added at final whistle in case game is cancelled; move this, or set a cancel function to reverse the change?
 		updateGameScore(firstName, lastName)
 		$('.team-a-score').html(currentGame().teamAScore)
 		$('.team-b-score').html(currentGame().teamBScore)
-		// TODO: player name on the dropdown should default to 'Player Name' after goal button is pressed
-		// TODO: update the players list with goals scored: Team A: Chris Rollins(1), Damo Connop(5) etc.
+		// TODO: player name on the dropdown should default back to 'Player Name' after goal button is pressed
+		// TODO: update the players list at the top with goals scored: Team A: Chris Rollins(1), Damo Connop(5) etc.
 		saveData()
 	} else {
 		console.log('game has already ended')
 	}
-
-
-	let player = document.forms.goal.goalscorer.value   // TODO: unfinished! need to get the player from the dropdown and modify the goalScored function above to use it.
-
 }
 
 function updateGameScore(firstName, lastName) {
@@ -452,7 +451,7 @@ function assignWinningPoints(callback) {		// TODO: Looks ripe for refactoring
 	if ( currentGame().endTime ) {
 		if (currentGame().teamAScore === currentGame().teamBScore ) {
 			// each player on both sides gets 2 leagueScore point
-			for (let i = 0; i < currentGame().teamA.length; i++) {
+			for (let i = 0; i < currentGame().teamA.length; i++) {		// TODO: use a .map here?
 				let name = currentGame().teamA[i].split(' ')
 				let firstName = name[0]
 				let lastName = name[1]
@@ -513,7 +512,7 @@ function updatePlayerLeagueScore(firstName, lastName, points) {
 	saveData()
 }
 
-function finalWhistle() {
+function finalWhistle() {	// TODO: rename with ...Handler?
 	setGameEndTime()
 	assignWinningPoints(function(){
 		getLeagueStats(jsonData)
@@ -528,18 +527,10 @@ function finalWhistle() {
 	$('.game').addClass('hidden')
 	$('#back-button').removeClass('hidden')
 	$('#back-button').addClass('btn-primary').removeClass('btn-default')
-	//$('.delete-game').addClass('hidden')
-
-	// Output match stats to display? Winning team (goals scored in game)
-	// Output top goal scorer
-	// update each Player's stats from teamAScorers/teamBScorers to jsonData leagueGoalsScored if they scored. 1 point for each goal
-	// leagueScore - for each Players add to their individual jsonData stats 3 for a win, 2 for a draw, 1 for a loss
-	// add gameStats to previousGameStats and store back in DB
-	// clear gameStats
 }
 
 function setGameEndTime() {
-	// update latest game's endTime to determine whether game complete or not.
+	// update latest game's endTime. This is used to determine whether game complete or not.
 	currentGame().endTime = Date()
 	saveData()
 }
@@ -583,27 +574,20 @@ function getLeagueStats(jsonData) {		// Mixed model and view? ...this also displ
 		console.log(player.leagueScore + ': ' + player.playerName);
 	})
 
-	// FIXME: sorts and console.logs the leaderboard by leagueScore, but doesn't use jquery to put the info anywhere yet.
 	// IDEA: For manager: highlight low skill level but high score... indicator of incorrect skill score?
 	// IDEA: Scores are emailed out to all active players.
-	// QUESTION: Do I want to always query the data from the db? or use the version cached in jsonData var?
 }
 
 function displayRawData() {
 	document.write( localStorage.getItem(LOCAL_STORAGE_NAME) );
 }
 
-
-
 // If database is present and game ongoing, i.e. no endTime, restore previous gamestate
-
-
 $(document).ready(function(){
 
-    getData()
+    getData()	// TODO: should this be wrapped in an 'init' function so it's clear what's going on?
 	if ( jsonData.players.length > 0 ) {
 		$('.gen-test-data').addClass('hidden')
-
 	}
 
 	if (jsonData.games.length > 0) {
@@ -612,13 +596,13 @@ $(document).ready(function(){
 	}
 
 	// TODO: make this into a 'recover state' type function that can be called in several places.
-	if ( localStorage.getItem(LOCAL_STORAGE_NAME) && currentGame() &&    !currentGame().hasOwnProperty('endTime') ) {
+	if ( localStorage.getItem(LOCAL_STORAGE_NAME) && currentGame() && !currentGame().hasOwnProperty('endTime') ) {
 		$('.intro-para').addClass('hidden')		// TODO: this is a lot of jquery... might want to combine some of this into divs?
 		$('.gen-test-data').addClass('hidden')
 		$('#select-players-button').addClass('hidden')
 		$('#new-player-button').addClass('hidden')
 		$('.intro-para').addClass('hidden')
-		$('.game-date').html(currentGame().date)
+		$('.game-date').html(currentGame().date)		// TODO: chop off the GMT bit: Tue Oct 18 2016 16:52:29 GMT+0100 (BST)
 		$('.game-date-div').removeClass('hidden')
 		$('.players').removeClass('hidden')
 		$('.available-players').addClass('hidden')
@@ -648,10 +632,8 @@ $(document).ready(function(){
 });
 
 // TODO: check for remaining functions written but not implemented
-// TODO: add bootstrap - it looks like shit on a phone in particular
-
+// TODO: add bootstrap - it looks bad on a phone in particular
 // TODO: allow adding a player once game is in progress. late players? maybe a dropdown of remaining unchosen players displayed whilst game is in progress.
-
 // TODO: add some font awesome icons to buttons
 
 // Data storage format:
@@ -704,33 +686,6 @@ $(document).ready(function(){
 //   ]
 // }
 
-// GUI click handler interface:
-// createNewPlayer();			// Add a player to the database
-//
-// editPlayer();			// Edit an existing player
-//
-// playerLate();			// Set how many minutes late the player was
-//
-// retirePlayerToggle();			// Set a player account as disabled
-//
-// newFixture();			// Create an upcoming game in the schedule. Could generate a yes/no email to all 'active' players.
-//
-// setPlayersOnPitch();	// Select all players that are in attendance
-//
-// generateTeams();		// Randomly selects even teams based on skill level. Only do this just before game.
-// printTeams();			// Output teams somehow, maybe to the screen
-//
-// kickOff();				// Creates the gameStats object
-//
-// goalScored();			// Record a goal. Not sure how to do the players.... drop down selector somehow?
-//
-// finalWhistle();			// Sorts out final game stats and stores data back to jsonData and previousGameStats objects. Saves data somewhere
-//
-// displayLeagueStats();	// Display current player league stats
-//
-// updateMoniesOwed();		// Update a money owed by the player
-//
-// newSeason();			// Archive off this season's data to another file and wipe this seasons data
 
 // learn testing: mocha
 //
