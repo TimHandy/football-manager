@@ -1,12 +1,13 @@
-// 'use strict'
+'use strict'
 
 // const pricePerGame = 3			// £
+var jsonData;
 const LATE_TAX = 2	// £/min
 const LOCAL_STORAGE_NAME = "footballData"
 let teamA = []
 let teamB = []
 
-const demoPlayers = ['Tim Handy', 'Jade Andrews', 'Chris Rollins', 'Leah Andrews', 'Karl Cedeira', 'Misako Cedeira', 'David Beckham', 'Diego Maradonna', 'Jane Doe', 'Damo Connop', 'Sarah Connop']
+// const demoPlayers = ['Tim Handy', 'Jade Andrews', 'Chris Rollins', 'Leah Andrews', 'Karl Cedeira', 'Misako Cedeira', 'David Beckham', 'Diego Maradonna', 'Jane Doe', 'Damo Connop', 'Sarah Connop']
 
 // Helper functions ############################################################
 
@@ -31,15 +32,15 @@ function saveData() {
 
 function deleteAllData() {
 	localStorage.removeItem(LOCAL_STORAGE_NAME)
+	location.reload();  // is the best way to reload the page?
+}
+
+function back() {		// used for back-button. Should this be better named?
 	location.reload();
 }
 
-function back() {
-	location.reload();
-}
-
-function shuffle(array) {
-	//Fisher-Yates (aka Knuth) shuffle
+function shuffle(array) {	// mutates the array
+	// Fisher-Yates (aka Knuth) shuffle
 	// Used like so:
 	// var arr = [2, 11, 37, 42];
 	// arr = shuffle(arr);
@@ -71,7 +72,7 @@ function findPlayersBySkillLevel(playersarr, skill) {	// requires an array of pl
 	return playersarr.filter(player => player.skillLevel === skill)
 }
 
-function justNames(playersArr) {	// this is an example of a pure function
+function justNames(playersArr) {	// requires an array of player objects
 	return playersArr.map(function(player) {
 		return player.firstName + " " + player.lastName
 	})
@@ -114,8 +115,6 @@ function genTestData() {	// Just for testing
 	// 	generateGame(teamA, teamB)
 	// })	// not people from players! these are just fake names
 
-	//location.reload();
-
 	$('.gen-test-data').addClass('hidden')
 }
 
@@ -128,27 +127,24 @@ function capitalizeFirstLetter(string) {
 
 function createNewPlayer(firstName, lastName, email, skillLevel) {
 	let obj = {
-		created: Date.now(),		// TODO: should this be human readable? Probably
-		firstName: firstName,		// FIXME: name and email should be mandatory
-		lastName: lastName,			// FIXME: name and email should be mandatory
-		email: email,				// FIXME: name and email should be mandatory
+		created: Date.now(),		// TODO: should this be human readable? Probably. Or should it be like this so that I could run other functions against the date? e.g. show all games from last month etc.?
+		firstName: firstName,
+		lastName: lastName,
+		email: email,
 		active: true,
-		skillLevel: skillLevel,				// default to 2
+		skillLevel: skillLevel,
 		leagueScore: 0,
 		leagueGoalsScored: 0
 	}
 
-	// TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? where does the form validation go?
-	// FIXME: prevent two players with the same first and last name
-	// FIXME: prevent two players with the same email address
+	// TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? But then I couldn't call createNewPlayer() manually; it would need to pull the data from the form. Where should the form validation go? (It currently goes on the createNewPlayerFromForm)
 
 	jsonData.players.push(obj)
 	$('.intro-para').addClass('hidden')
 	saveData()
 }
-// TODO: there is a createNewPlayer and a newPlayerForm function?
 
-function toggleNewPlayer() { // TODO: what does this do? should it be elsewhere?
+function toggleNewPlayer() {	// Show the new player form
 	$('.new-player-form').removeClass('hidden')
 	$('.intro-para').addClass('hidden')
 	$('#new-player-button').addClass('hidden')
@@ -166,7 +162,7 @@ function createNewPlayerFromForm() {
 	let skillLevel = parseInt(form.skill.value)
 	if ( firstName === "Firstname" || firstName === "" ) {
 		let msg = 'First Name is required'
-		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')
+		$('#user-input-error').html('<h3>'+msg+'</h3>').removeClass('hidden')		// TODO: lots of code to DRY up.
 		return
 	} else if ( lastName === "Lastname" || lastName === "" ) {
 		let msg = 'Last Name is required'
@@ -192,21 +188,23 @@ function createNewPlayerFromForm() {
 }
 
 function emailExists(email) {
-	return jsonData.players.some(function(player){return player.email === email})
+	return jsonData.players.some(player => player.email === email)
 }
 
 function fullNameExists(firstName, lastName) {
-	return jsonData.players.some(function(player){return player.firstName === firstName && player.lastName === lastName})
+	return jsonData.players.some(player => player.firstName === firstName && player.lastName === lastName)
 }
 
-
-
-function validateEmail(email) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(email);
+function validateEmail(email) {		// quick dirty regex email validation
+    var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return regex.test(email);
 }
 
-function retirePlayerToggle(firstName, lastName) {
+// TODO: need GUI to be able to add moniesOwed to player. Maybe in the edit page?
+
+// TODO: MVC? Move all functions into respective sections... for Model, View, and Controller? Might make it easier to understand what's going on?
+
+function retirePlayerToggle(firstName, lastName) {	// sets player as not active. Removes player from stats display
 	let player = findPlayerByName(firstName, lastName)
 	if (player.moniesOwed == true) {
 		return 'Monies owed is not zero! Unable to retire player'
@@ -233,12 +231,12 @@ function setSkillLevel(firstName, lastName, skillLevel) {
 
 function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus or minus £/$
 	// update jsonData moniesOwed field
-
 	findPlayerByName(firstName, lastName).moniesOwed += currencyValue
 	saveData()
 }
 
-// function newSeason() {
+
+// function newSeason() {	//TODO: write this newSeason function
 // 	// Archive off this season's data (previousGameStats and jsonData to another file) then wipe
 // 	// Create a new localStorage entry and copy all data to that one
 // 	// This seasons data, including all stats, but leaving players and moniesOwed (reset their scores)
@@ -248,11 +246,11 @@ function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus o
 // 	// Generate a new game date for the calendar and maybe email the 'active' status players
 // }
 
-// TODO: appears to be a lot of firstName, lastName being passed around... can I fix that???
+// TODO: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate?
 
 // Pre-game ####################################################################
 
-function playerLate(firstName, lastName, minutesLate) {
+function playerLate(firstName, lastName, minutesLate) {		// TODO: Add this to edit player page?
 	let tax = LATE_TAX * minutesLate;
 
 	player = findPlayerByName(firstName, lastName)
@@ -260,7 +258,7 @@ function playerLate(firstName, lastName, minutesLate) {
 	// later could have the app do the time keeping, and generate the mins late from the time of the game start?
 }
 
-function displayAvailablePlayers() {
+function displayAvailablePlayers() {		// TODO: is this mixing controller and view?
 	// generate an li for each player in players
 	let players = justNames(jsonData.players).sort()	// ['Tim Handy', 'Jade Andrews']
 	let list = $('#select-players ul')
@@ -556,7 +554,7 @@ function deleteCurrentGame() {
 
 // Game stats functions ########################################################
 
-function getCurrentGameStats() {
+function getCurrentGameStats() {  // used only for me!
 	console.log(`Date: ${currentGame().date}`)
 	console.log(`Team A: ${currentGame().teamAScore}`)
 	console.log(`Team B: ${currentGame().teamBScore}`)
@@ -565,13 +563,14 @@ function getCurrentGameStats() {
 	console.log(`Team B Players: ${currentGame().teamB}`)
 }
 
-function getLeagueStats(jsonData) {
+function getLeagueStats(jsonData) {		// Mixed model and view? ...this also displays data. maybe this should be broken into two: a getstats and an update view type function
 	let players = jsonData.players.map(function(player) {
 		return {playerName: player.firstName + ' ' + player.lastName,
 				leagueScore: player.leagueScore,
 				leagueGoalsScored: player.leagueGoalsScored
 				}
 	})
+	// TODO: require a .filter here to remove the player.active === false users. Don't want to display the inactive users.
 	players.sort(function(a, b) {
 		return b.leagueScore - a.leagueScore
 	})
