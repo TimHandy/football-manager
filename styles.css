@@ -6,15 +6,7 @@
 	padding-top: 50px;			/* temporary !! */
 }
 
-.dev-tools{
-	border: solid 2px grey;
-	margin-bottom: 50px;
-	/*display:none;*/
-}
- 	.dev-tools button {
-		height: auto;
-		width: auto;
-	}
+
 
 li{
 	list-style-type: none;
@@ -62,3 +54,14 @@ input[type=checkbox] {
 	height: 100px;
 	font-size: 50px;
 }
+
+.dev-tools{
+	border: solid 2px grey;
+	margin-bottom: 50px;
+	/*display:none;*/
+}
+ 	.dev-tools button {
+		height: auto;
+		width: auto;
+        display: inline;
+	}

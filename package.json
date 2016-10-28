@@ -17,6 +17,11 @@
   },
   "homepage": "https://github.com/TimHandy/football-manager#readme",
   "devDependencies": {
+    "eslint": "^3.8.1",
+    "eslint-config-standard": "^6.2.1",
+    "eslint-plugin-promise": "^3.3.0",
+    "eslint-plugin-standard": "^2.0.1",
     "mocha": "^3.1.2"
-  }
+  },
+  "dependencies": {}
 }
