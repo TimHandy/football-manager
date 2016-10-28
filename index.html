@@ -16,11 +16,11 @@
 				Developer Tools: This section will be hidden in the production app.
 			</h6>
 
-			<div class="gen-test-data ">
-				<button class="btn btn-default btn-lg btn-block btn-huge" onclick="genTestData()" type="button" name="button">Generate Test Players</button>
+			<div class="">
+				<button class="btn btn-default btn-lg btn-block btn-huge gen-test-data" onclick="genTestData()" type="button" name="button">Generate Test Players</button>
                 <button class="btn btn-default btn-lg btn-block btn-huge" onclick="consoleLogDb()"type="button" name="button">console.log (database)</button>
                 <button class="btn btn-default btn-lg btn-block btn-huge" onclick="displayRawData()" type="button" name="button">Export Raw Data</button>
-                <button class="btn btn-default btn-lg btn-block btn-huge" onclick="deleteAllData()" type="button" name="button">Delete DB</button>
+                <button class="btn btn-default btn-lg btn-block btn-huge" id="delete-db-button" type="button" name="button">Delete DB</button>
 			</div>
 		</div>
 
@@ -38,7 +38,7 @@
 			</p>
 
 			<div class="">
-				<button id="new-player-button" class="btn btn-default btn-lg btn-block btn-huge" onclick="toggleNewPlayer()" type="button" name="button">Store New Player</button>
+				<button id="new-player-button" class="btn btn-default btn-lg btn-block btn-huge" type="button" name="button">Store New Player</button>
 			</div>
 
 
@@ -54,12 +54,12 @@
 					<div id="user-input-error" class="hidden">
 						<h3></h3>
 					</div>
-					<button class="btn btn-success btn-lg btn-block btn-huge" id="new-player-submit-button" onclick="createNewPlayerFromForm()" type="button" name="button">Submit</button>
+					<button class="btn btn-success btn-lg btn-block btn-huge" id="new-player-submit-button" type="button" name="button">Submit</button>
 				</form>
 
 			</div>
 			<div class="">
-				<button id="select-players-button" class="btn btn-success btn-lg btn-block btn-huge" onclick="displayAvailablePlayers()" type="button" name="button">Select Existing Players</button>
+				<button id="select-players-button" class="btn btn-success btn-lg btn-block btn-huge" type="button" name="button">Select Existing Players</button>
 			</div>
 
 			<div class="available-players hidden ">
@@ -78,7 +78,7 @@
 			</div>
 
 			<div class="generate-teams hidden">
-				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="wrapperforGenerateTeams()" type="button" name="button">Generate Teams</button>
+				<button class="btn btn-success btn-lg btn-block btn-huge" id="generate-teams-button" type="button" name="button">Generate Teams</button>
 			</div>
 			<div class="game-date-div hidden">
 				<p>Game: <span class="game-date">Date</span></p>
@@ -92,7 +92,7 @@
 			</div>
 
 			<div class="kickoff hidden ">
-				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="kickOff()" type="button" name="button">Kickoff</button>
+				<button id='kickoff-button' class="btn btn-success btn-lg btn-block btn-huge" type="button" name="button">Kickoff</button>
 			</div>
 
 			<div class="game hidden ">
@@ -115,11 +115,11 @@
 
 					</form>
 				</div>
-				<button class="btn btn-success btn-lg btn-block btn-huge" onclick="goalHandler()" type="button" name="button">Goal</button>
+				<button class="btn btn-success btn-lg btn-block btn-huge" id='goal-button' type="button" name="button">Goal</button>
 			</div>
 
 			<div class="final-whistle hidden ">
-				<button class="btn btn-primary btn-lg btn-block btn-huge" onclick="finalWhistle()" type="button" name="button">Final Whistle</button>
+				<button class="btn btn-primary btn-lg btn-block btn-huge" id="final-whistle-button" type="button" name="button">Final Whistle</button>
 			</div>
 
 			<div class="final-score hidden ">
@@ -133,11 +133,11 @@
 			</div>
 
 			<div class="">
-				<button id="back-button" class="btn btn-default btn-lg btn-block btn-huge" onclick="back()" type="button" name="button">Back</button>
+				<button id="back-button" class="btn btn-default btn-lg btn-block btn-huge" id="back-button" type="button" name="button">Back</button>
 			</div>
 
 			<div class="delete-game hidden ">
-				<button class="btn btn-danger btn-lg btn-block btn-huge" onclick="deleteCurrentGame()" type="button" name="button">Delete Game</button>
+				<button class="btn btn-danger btn-lg btn-block btn-huge" id='delete-game-button' name="button">Delete Game</button>
 			</div>
 
 			<div id="league-stats" class="hidden">
@@ -156,7 +156,8 @@
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-		<script src="app.js"></script>
+		<script src="./dist/bundle.js"></script>
+
 
 
 
