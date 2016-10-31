@@ -1,3 +1,5 @@
+let webpack = require('webpack')
+
 module.exports = {
 
     // define entry points (i.e. the first js file that 'requires' other files, this is the one that gets the other .js files started, i.e. links to them)
