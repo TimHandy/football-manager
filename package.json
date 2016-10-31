@@ -4,6 +4,7 @@
   "description": "Football teams app:",
   "main": "app.js",
   "scripts": {
+    "start": "./node_modules/.bin/webpack --watch",
     "test": "./node_modules/mocha/bin/mocha ./test/"
   },
   "repository": {
