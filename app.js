@@ -2,6 +2,16 @@
 
 See README.md
 
+Current status:
+
+I know much of these functions are not 'pure' but want to make it so. Recognise now that should be passing in the state as args to function definitions, and returning the result.
+
+Requires a LOT of jquery page changes to show/hide sections.
+
+Advice on structure/approach would be great! Maybe this is approaching the size that a framework like React would be useful??
+
+This file is getting large. Need to move to some other modules, maybe a game module, a player module. 
+
 */
 
 'use strict'
@@ -21,7 +31,7 @@ let teamB
 
 function deleteAllData() {
     localStorage.removeItem(helper.LOCAL_STORAGE_NAME)
-    location.reload()  // is the best way to reload the page?
+    location.reload()  // QUESTION: is this the best way to reload the page?
 }
 
 function shuffle(array) {  // mutates the array
@@ -126,7 +136,7 @@ function chargePlayers(gameFee, jsonData) {
 
 function createNewPlayer(firstName, lastName, email, skillLevel) {
     let obj = {
-        created: Date.now(), // TODO: should this be human readable? Probably. Or should it be like this so that I could run other functions against the date? e.g. show all games from last month etc.?
+        created: Date.now(), // TODO: should this date be human readable? Probably. Or should it be like this so that I could run other functions against the date? e.g. show all games from last month etc.?
         firstName: firstName,
         lastName: lastName,
         email: email,
@@ -136,7 +146,7 @@ function createNewPlayer(firstName, lastName, email, skillLevel) {
         leagueGoalsScored: 0
     }
 
-    // TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? But then I couldn't call createNewPlayer() manually  it would need to pull the data from the form. Where should the form validation go? (It currently goes on the createNewPlayerFromForm)
+    // TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? But then I couldn't call createNewPlayer() manually it would need to pull the data from the form. Where should the form validation go? (It currently goes on the createNewPlayerFromForm). MVC pattern: keep the controller logic away from the model logic in separate functions?
 
     helper.jsonData.players.push(obj)
     $('.intro-para').addClass('hidden')
@@ -183,11 +193,11 @@ function createNewPlayerFromForm() {
         $('#user-input-error').addClass('hidden')
         $('#user-input-error').html('<h3>' + 'Player added successfully' + '</h3>').removeClass('hidden')
     }
-    // FIXME: notify user of success/fail on adding a new player
-    // FIXME: When click in the form fields the contents should highlight select all to allow overwrite
+
+    // FIXME: When click in the form fields the contents should highlight select all to allow overwrite. jquery onclick? onactive?
 }
 
-function emailExists(email) {
+function emailExists(email) {       // QUESTION: helper function; keep this in a module? or close by to where it's used?
     return helper.jsonData.players.some(player => player.email === email)
 }
 
@@ -195,14 +205,14 @@ function fullNameExists(firstName, lastName) {
     return helper.jsonData.players.some(player => player.firstName === firstName && player.lastName === lastName)
 }
 
-function validateEmail(email) { // quick dirty regex email validation
+function validateEmail(email) { // quick & dirty regex email validation
     let regex = /^(([^<>()\[\]\\., :\s@"]+(\.[^<>()\[\]\\., :\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     return regex.test(email)
 }
 
 // TODO: need GUI to be able to add moniesOwed to player. Maybe in the edit page?
 
-// TODO: MVC? Move all functions into respective sections... for Model, View, and Controller? Might make it easier to understand what's going on?
+// QUESTION: MVC? Move all functions into respective sections... for Model, View, and Controller? Might make it easier to understand what's going on?
 
 function retirePlayerToggle(firstName, lastName) { // sets player as not active. Removes player from stats display
     let player = findPlayerByName(firstName, lastName)
@@ -218,8 +228,10 @@ function retirePlayerToggle(firstName, lastName) { // sets player as not active.
     helper.saveData()
 }
 
+// QUESTION: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate? a lot of what I'm doing is storing names in arrays, then when needing to update the player object, I'm finding the actual object to work on, and updating it. This seems a long way around. Should I pass around the actual player object instead? ie. when players are picked, store the array of player objects and can then act directly on them, updating scores etc, and finally at end of game store that player back to the main store? What's the typical approach?
+
 function setSkillLevel(firstName, lastName, skillLevel) {
-    // helper.jsonData is an object, containing a players key, whose value is an array of player objects.
+    // jsonData is an object, containing a players key, whose value is an array of player objects.
     let player = findPlayerByName(firstName, lastName)
     if (player) {
         player.skillLevel = skillLevel
@@ -228,6 +240,8 @@ function setSkillLevel(firstName, lastName, skillLevel) {
     }
     helper.saveData()
 }
+
+// QUESTION: When putting data into objects is it standard practice to clean it on the way in, or only when pulling data out? e.g. correct capitalization.
 
 function editPlayer() {
     // TODO: or just do it from a view of player data? Drop down for player to display their info, then edit required fields and save back to the DB in one go.
@@ -239,7 +253,8 @@ function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus o
     helper.saveData()
 }
 
-// function newSeason() {  //TODO: write this newSeason function
+// TODO: write this newSeason function
+// function newSeason() {
 //   // Archive off this season's data (previousGameStats and helper.jsonData to another file) then wipe
 //   // Create a new localStorage entry and copy all data to that one
 //   // This seasons data, including all stats, but leaving players and moniesOwed (reset their scores)
@@ -249,7 +264,6 @@ function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus o
 //   // Generate a new game date for the calendar and maybe email the 'active' status players
 // }
 
-// TODO: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate?
 
 // Pre-game ####################################################################
 
@@ -261,9 +275,9 @@ function playerLate(firstName, lastName, minutesLate) { // TODO: Add this to edi
         // later could have the app do the time keeping, and generate the mins late from the time of the game start?
 }
 
-function displayAvailablePlayers() { // TODO: is this mixing controller and view?
+function displayAvailablePlayers() { // QUESTION: is this mixing controller and view?
     // generate an li for each player in players
-    let players = justNames(helper.jsonData.players).sort() // ['Tim Handy', 'Jade Andrews']
+    let players = justNames(helper.jsonData.players).sort() // ['Tim Handy', 'First Last']
     let list = $('#select-players ul')
     let template = $('#players-template').html()
     $(list).html('')
@@ -279,7 +293,7 @@ function displayAvailablePlayers() { // TODO: is this mixing controller and view
     $('#back-button').removeClass('hidden')
 }
 
-let chosenPlayers = [] // TODO: dirty global letiable, refactor to remove
+let chosenPlayers = [] // FIXME: dirty global variable, refactor to remove
 function choosePlayers() {
     let players = document.getElementsByName('player')
     players = Array.prototype.slice.call(players)
@@ -294,7 +308,7 @@ function choosePlayers() {
     }).map(function(player) {
         return findPlayerByName(player.split(' ')[0], player.split(' ')[1])
     })
-    return chosenPlayers // TODO: not sure I need to return this right now, as the function sets the let chosenPlayers. Dirty. make other functions use this function as a return expression.
+    return chosenPlayers // TODO: not sure I need to return this right now, as the function sets the var chosenPlayers. Dirty. make other functions use this function as a return expression.
 
     // TODO: seems to be a lot going on with letiables of chosenPlayers without being saved to storage, maybe chosen players should be stored early on?
 }
@@ -357,14 +371,14 @@ function generateTeams(chosenPlayers, callback) {
     // helper.saveData()    // don't need to save here, not necessary until the 'Kickoff' button pressed?
 }
 
-function wrapperforGenerateTeams() { // TODO: this is shitty having to make a wrapper. it's also a noun, not a verb.
+function wrapperforGenerateTeams() { // TODO: this is bad having to make a wrapper. think now I have moved the onclick events to here from the the html I might not need this. It's also a noun, not a verb.
     generateTeams(choosePlayers()) // TODO: can I put this directly into the click handler?
 }
 
 // Game-time  ##################################################################
 
 function kickOff() {
-    generateGame(teamA, teamB) // this should not have a global vars for teamA and B, they should come from helper.jsonData, and be passed in as a var.
+    generateGame(teamA, teamB) // FIXME: this should not have a global vars for teamA and B, they should be stored in jsonData, and be passed in as a args.
     chargePlayers(GAME_FEE, helper.jsonData)
     populatePlayerDropdown(teamA.concat(teamB))
     $('.game-date').html(currentGame(helper.jsonData).date)
@@ -395,7 +409,7 @@ function generateGame(teamA, teamB) {
         teamAScore: 0,
         teamBScore: 0,
         scorers: [], // ['Tim Handy', 'Jade Andrews', 'Karl Cedeira']  order in which goals were scored
-        endTime: undefined // TODO: undefined or null?? which is most appropriate? Think undefined is for properties and vals, and null is for objects.
+        endTime: undefined // QUESTION: undefined or null?? which is most appropriate? Think undefined is for properties and vals, and null is for objects.
     }
 
     helper.jsonData.games.push(game)
@@ -447,7 +461,7 @@ function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored) {
         // TODO: this should only be added at final whistle, in case game is cancelled
 }
 
-function assignWinningPoints(callback) { // TODO: Looks ripe for refactoring
+function assignWinningPoints(callback) { // TODO: Looks ripe for refactoring. Tried it, didn't work... try again!
     // if draw
     if (currentGame(helper.jsonData).endTime) {
         if (currentGame(helper.jsonData).teamAScore === currentGame(helper.jsonData).teamBScore) {
@@ -634,6 +648,8 @@ $(document).ready(function() {
         }
     }) // TODO: should this be wrapped in an 'init' function so it's clear what's going on?
 })
+
+// QUESTION: lots of click handlers here. Is this the right thing to do?
 
 $('#new-player-button').click(function() {
     toggleNewPlayer()
