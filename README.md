@@ -1,7 +1,23 @@
-
 # Football Teams App:
 
-App to record individual cumulative friendly football game winning points.
+## Development Setup
+
+1. run 'npm start' to run 'webpack --watch'
+1. Use Atom dev-live-reload to view the app in browser/ CTRL+SHFT+3
+1. Don't open dist/bundle.js, it crashes Atom. If you need to view errors, they should be listed as the orginal filename as I added "devtool: 'eval-source-map'," to webpack.config.js
+
+At one point I had this all running on Webpack with:
+- webpack-dev-server
+- 'npm start' would run the local version of webpack-dev-server
+- css loader was working
+
+However, Mustache broke and couldn't fix it so restored to this state. See my webpack notes to carry on with this
+
+
+## About
+
+App to record friendly football game winning points.
+Points are recorded cumulatively, per player, so that at the end of the season you have a winning individual.
 
 HTML, CSS, Javascript. Open index.html to begin.
 
