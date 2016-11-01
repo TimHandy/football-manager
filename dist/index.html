@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Football App</title>
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+		<!-- Optional theme -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<!-- <link rel="stylesheet" href="styles.css" media="screen" title="no title"> -->
+	</head>
+	<body>
+		<div class="dev-tools">
+			<h3>
+				Developer Tools: This section will be hidden in the production app.
+			</h3>
+
+			<div class="">
+				<button class="btn btn-default btn-huge btn-huge gen-test-data" id="generate-test-players-button" type="button" name="button">Gen Test Players</button>
+                <button class="btn btn-default btn-huge" id="consolelog-db-button"type="button" name="button">console.log(DB)</button>
+                <button class="btn btn-default btn-huge" onclick="displayRawData()" type="button" name="button">Export Raw Data</button>
+                <button class="btn btn-default btn-huge" id="delete-db-button" type="button" name="button">Delete DB</button>
+			</div>
+		</div>
+
+		<div class="wrapper col-xs-12">
+			<h1>Football App</h1>
+			<p class="intro-para hidden">
+				Generates two evenly matched random teams: Select existing players or add players to the database first.<br>
+				Teams are evenly matched using each players' assigned skill rating.<br>
+				Game stats are recorded, including game date, teams, players, winning score, goal scorers.<br>
+				Cumulative stats are recorded for each player: total goals scored across the season and individual winning points (3 points for a win, 2 for a draw, 1 point for playing). <br>
+				Reports by player league score and total goals to determine a season winner. <br>
+				Players can be charged a nominal fee for lateness to games, which is recorded until paid up.<br>
+				Data is stored in localStorage on the device and can be exported as raw JSON. <br /><br />
+				Alpha v0.1.
+			</p>
+
+			<div class="">
+				<button id="new-player-button" class="btn btn-default btn-lg btn-block btn-huge" type="button" name="button">Store New Player</button>
+			</div>
+
+
+			<div class="new-player-form hidden">
+				<h3>
+					All fields are required:
+				</h3>
+				<form  id="new-player" action="">
+					<input class="input-lg" type="text" name="fname" value="First Name"><br>
+					<input class="input-lg" type="text" name="lname" value="Last Name"><br>
+					<input class="input-lg" type="text" name="email" value="Email"><br>
+					<input class="input-lg" type="text" name="skill" value="Skill level (1-3)"><br>
+					<div id="user-input-error" class="hidden">
+						<h3></h3>
+					</div>
+					<button class="btn btn-success btn-lg btn-block btn-huge" id="new-player-submit-button" type="button" name="button">Submit</button>
+				</form>
+
+			</div>
+			<div class="">
+				<button id="select-players-button" class="btn btn-success btn-lg btn-block btn-huge" type="button" name="button">Select Existing Players</button>
+			</div>
+
+			<div class="available-players hidden">
+				<p>Select all players in attendance, then generate teams</p>
+				<form id="select-players" class="">
+					<ul>
+						
+					</ul>
+				</form>
+			</div>
+
+			<div class="generate-teams hidden">
+				<button class="btn btn-success btn-lg btn-block btn-huge" id="generate-teams-button" type="button" name="button">Generate Teams</button>
+			</div>
+			<div class="game-date-div hidden">
+				<p>Game: <span class="game-date">Date</span></p>
+			</div>
+
+			<div class="players hidden ">
+				<h3>Team A</h3>
+				<p id='team-a'></p>
+				<h3>Team B</h3>
+				<p id='team-b'></p>
+			</div>
+
+			<div class="kickoff hidden ">
+				<button id='kickoff-button' class="btn btn-success btn-lg btn-block btn-huge" type="button" name="button">Kickoff</button>
+			</div>
+
+			<div class="game hidden ">
+				<h3>Current Score</h3>
+				<h3>
+					Team A: <span class="team-a-score">0</span>
+				</h3>
+				<h3>
+					Team B: <span class="team-b-score">0</span>
+				</h3>
+			</div>
+
+			<div class="goal hidden ">
+				<div class="">
+					<form id="goal" class="">
+						<select class="form-control" id="dropdown-options" name="goalscorer">
+							<option>Player Name</option>
+						</select>
+						<!-- TODO: not sure a form-control is the best thing for a drop down?? -->
+
+					</form>
+				</div>
+				<button class="btn btn-success btn-lg btn-block btn-huge" id='goal-button' type="button" name="button">Goal</button>
+			</div>
+
+			<div class="final-whistle hidden ">
+				<button class="btn btn-primary btn-lg btn-block btn-huge" id="final-whistle-button" type="button" name="button">Final Whistle</button>
+			</div>
+
+			<div class="final-score hidden ">
+				<h3>Final Score</h3>
+				<p>
+					Team A: <span class="team-a-score">0</span>
+				</p>
+				<p>
+					Team B: <span class="team-b-score">0</span>
+				</p>
+			</div>
+
+			<div class="">
+				<button id="back-button" class="btn btn-default btn-lg btn-block btn-huge" id="back-button" type="button" name="button">Back</button>
+			</div>
+
+			<div class="delete-game hidden ">
+				<button class="btn btn-danger btn-lg btn-block btn-huge" id='delete-game-button' name="button">Delete Game</button>
+			</div>
+
+			<div id="league-stats" class="hidden">
+				<h1>
+					League Scores Leaderboard
+				</h1>
+				<ul>
+				</ul>
+			</div>
+	</div>
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+
+		<!-- Latest compiled and minified JavaScript -->
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+		<script src="./bundle.js"></script>
+	<script type="text/javascript" src="bundle.js"></script></body>
+</html>

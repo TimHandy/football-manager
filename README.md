@@ -1,23 +1,6 @@
 # Football Teams App
 
-## Development Setup
-
-1. run 'npm start' to run 'webpack --watch'
-    * webpack combines the js module files and does Babel transpiling
-1. Use Atom dev-live-reload to view the app in browser/ CTRL+SHFT+3
-1. Don't open dist/bundle.js, it crashes Atom. If you need to view errors, they should be listed as the orginal filename as I added "devtool: 'eval-source-map'," to webpack.config.js
-
-At one point I had this all running on Webpack with:
-- webpack-dev-server to start a server (didn't require atom live server)
-- 'npm start' would run the local version of webpack-dev-server and also replace webpack
-- all source files in an src dir, including index.html, css, js files.
-- HtmlWebpackPlugin  so that the index.html can live in src file and still open automatically when you go to http://localhost:3000///
-- devtool: 'eval-source-map'    so that errors in Chrome are displayed with the original filename, not the bundle.js file
-- css loader
-- path module for future deployment OS independence
-
-However, Mustache broke and couldn't fix it so restored to this state. See my webpack notes to carry on with this
-
+The app is available at https://timhandy.github.io/football-manager/dist/
 
 ## About
 
@@ -50,3 +33,31 @@ Designed for Karl; he plays a weekly game with his mates. The brief was:
 - Need to output the current stats to a text file? so that it can be emailed out?
 - Show and update players if RSVP but no-show - maybe a forfeit for this?
 - End of season lowest individual score pays for the whole meal out at a curry house!
+
+## Development Setup
+
+1. Clone the repo to your machine
+1. cd into the root dir of repo
+2. Install dependencies
+
+       $ npm install
+
+1. Start the development server 'webpack-dev-server'. The url will be http://localhost:8080/
+
+       $ npm start
+
+1. If you want to export the output to the dist dir. This is not required for development however. Webpack combines the js module files and does Babel transpiling
+
+       $ webpack 
+
+
+See webpack.config.js for what's installed:
+- webpack-dev-server to start a server
+- all source files are in the src dir, including index.html, css, js files
+- HtmlWebpackPlugin  so that the index.html can live in src file and still open automatically when you go to http://localhost:3000/
+- devtool: 'eval-source-map' so that errors in Chrome are displayed with the original filename, not the bundle.js file
+- css loader
+- path module for future deployment OS independence
+
+
+
