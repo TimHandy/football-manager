@@ -1,3 +1,15 @@
+.dev-tools{
+	border: solid 2px grey;
+	margin-bottom: 50px;
+	/*display:none;*/
+}
+ 	.dev-tools button {
+		/*height: auto;
+		width: auto;*/
+        /*display: inline;*/
+		font-size: 2em;
+	}
+
 .hidden{
 	display: none;
 }
@@ -26,10 +38,18 @@ p{
 	font-size: 40px;
 }
 
-input[type=checkbox] {
-    zoom: 5;
+/*input[type=checkbox] {
+    zoom: 0;
     font-size: 10px;
 	font-size: 40px;
+	vertical-align: middle;
+	margin-top: 0;
+}*/
+
+.li-checkbox [type=checkbox] {
+    /*zoom: 0;   not a good way to to this*/
+	width: 1.5em;
+	height: 1.5em;
 	vertical-align: middle;
 	margin-top: 0;
 }
@@ -55,13 +75,4 @@ input[type=checkbox] {
 	font-size: 50px;
 }
 
-.dev-tools{
-	border: solid 2px grey;
-	margin-bottom: 50px;
-	/*display:none;*/
-}
- 	.dev-tools button {
-		height: auto;
-		width: auto;
-        display: inline;
-	}
+

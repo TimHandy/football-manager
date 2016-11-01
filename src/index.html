@@ -8,19 +8,19 @@
 
 		<!-- Optional theme -->
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
-		<link rel="stylesheet" href="styles.css" media="screen" title="no title">
+		<!-- <link rel="stylesheet" href="styles.css" media="screen" title="no title"> -->
 	</head>
 	<body>
 		<div class="dev-tools">
-			<h6>
+			<h3>
 				Developer Tools: This section will be hidden in the production app.
-			</h6>
+			</h3>
 
 			<div class="">
-				<button class="btn btn-default btn-lg btn-block btn-huge gen-test-data" id="generate-test-players-button" type="button" name="button">Generate Test Players</button>
-                <button class="btn btn-default btn-lg btn-block btn-huge" id="consolelog-db-button"type="button" name="button">console.log (database)</button>
-                <button class="btn btn-default btn-lg btn-block btn-huge" onclick="displayRawData()" type="button" name="button">Export Raw Data</button>
-                <button class="btn btn-default btn-lg btn-block btn-huge" id="delete-db-button" type="button" name="button">Delete DB</button>
+				<button class="btn btn-default btn-huge btn-huge gen-test-data" id="generate-test-players-button" type="button" name="button">Gen Test Players</button>
+                <button class="btn btn-default btn-huge" id="consolelog-db-button"type="button" name="button">console.log(DB)</button>
+                <button class="btn btn-default btn-huge" onclick="displayRawData()" type="button" name="button">Export Raw Data</button>
+                <button class="btn btn-default btn-huge" id="delete-db-button" type="button" name="button">Delete DB</button>
 			</div>
 		</div>
 
@@ -62,17 +62,11 @@
 				<button id="select-players-button" class="btn btn-success btn-lg btn-block btn-huge" type="button" name="button">Select Existing Players</button>
 			</div>
 
-			<div class="available-players hidden ">
-				<p>
-					Select all players in attendance, then generate teams
-				</p>
+			<div class="available-players hidden">
+				<p>Select all players in attendance, then generate teams</p>
 				<form id="select-players" class="">
 					<ul>
-						<template id="players-template">
-							<li>
-								<input type="checkbox" name="player" value="{{.}}"> {{.}}
-							</li>
-						</template>
+						
 					</ul>
 				</form>
 			</div>
@@ -150,11 +144,10 @@
 	</div>
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-		<script src="mustache.min.js"></script>
 
 		<!-- Latest compiled and minified JavaScript -->
 		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
-		<script src="./dist/bundle.js"></script>
+		<script src="./bundle.js"></script>
 	</body>
 </html>
