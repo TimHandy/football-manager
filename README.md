@@ -1,6 +1,8 @@
 # Football Teams App
 
-The app is available at https://timhandy.github.io/football-manager/dist/
+The app is available at http://htmlpreview.github.io/?https://github.com/TimHandy/football-manager/blob/master/dist/index.html
+
+View in dev tools with the mobile device view; best viewed at around smartphone size.
 
 ## About
 
