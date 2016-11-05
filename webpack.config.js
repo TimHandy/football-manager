@@ -1,5 +1,6 @@
 let path = require('path')  // use path here and below in path.join as it's a safe way to use file paths to allow for / or \ depending on which OS the app will run on.
 let HtmlWebpackPlugin = require('html-webpack-plugin')
+let FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 module.exports = {
 
@@ -45,6 +46,7 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({ // npm i -D html-webpack-plugin
             template: path.join(__dirname, 'src', 'index.html')
-        })
+        }),
+        new FaviconsWebpackPlugin(path.join(__dirname, 'src', 'football-soccer-ball-152-183228.png'))
     ]
 }

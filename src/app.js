@@ -597,7 +597,7 @@ function getLeagueStats(jsonData) { // Mixed model and view? ...this also displa
 }
 
 function displayRawData() {
-    document.write(localStorage.getItem(LOCAL_STORAGE_NAME))
+    document.write(localStorage.getItem(helper.LOCAL_STORAGE_NAME))
 }
 
 // If database is present and game ongoing, i.e. no endTime, restore previous gamestate
