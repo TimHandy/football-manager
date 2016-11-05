@@ -76,7 +76,7 @@ export function findPlayersBySkillLevel(playersarr, skill) {  // requires an arr
 }
 
 export function justNames(playersArr) {  // requires an array of player objects
-    let playerNamesArr =  playersArr.map(function(player) {
+    let playerNamesArr = playersArr.map(function(player) {
         return player.firstName + ' ' + player.lastName
     })
     return playerNamesArr

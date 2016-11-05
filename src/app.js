@@ -203,7 +203,6 @@ function displayAvailablePlayers() { // QUESTION: is this mixing controller and 
     // generate an li for each player in players
     let players = h.justNames(h.jsonData.players).sort() // ['Tim Handy', 'First Last']
     let list = $('#select-players ul')
-    let template = $('#players-template').html()
     $(list).html('')
     players.forEach(function(player) {
         //$(list).append(Mustache.render(template, player))
