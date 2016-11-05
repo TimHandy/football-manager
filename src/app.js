@@ -342,23 +342,23 @@ function generateGame(teamA, teamB) {
     h.saveData(h.jsonData)
 }
 
-function goalHandler() {
+function goalHandler(jsonData) {
     let dropdown = document.getElementById('dropdown-options') // QUESTION: is there a better way to do a dropdown here?
     let player = dropdown.options[dropdown.selectedIndex].value
     let firstName = player.split(' ')[0]
     let lastName = player.split(' ')[1]
-    goalScored(firstName, lastName)
+    goalScored(firstName, lastName, jsonData)
         // TODO: validation: must choose a real player. 'Player Name' should not be a valid choice.
         // TODO: set dropdown back to 'Player Name' after valid goal button press
         // TODO: make the dropdown more visible  background color?
 }
 
-function goalScored(firstName, lastName) {
+function goalScored(firstName, lastName, jsonData) {
     if (!h.currentGame(h.jsonData).endTime) {
         h.currentGame(h.jsonData).scorers.push(firstName + ' ' + lastName)
         console.log('Scorer: ' + firstName + ' ' + lastName + ' added')
         updatePlayerLeagueGoalsScored(firstName, lastName, 1, h.jsonData) // TODO: should only be added at final whistle in case game is cancelled  move this, or set a cancel function to reverse the change?
-        updateGameScore(firstName, lastName)
+        updateGameScore(firstName, lastName, jsonData)
         $('.team-a-score').html(h.currentGame(h.jsonData).teamAScore)
         $('.team-b-score').html(h.currentGame(h.jsonData).teamBScore)
             // TODO: player name on the dropdown should default back to 'Player Name' after goal button is pressed
@@ -369,10 +369,10 @@ function goalScored(firstName, lastName) {
     }
 }
 
-function updateGameScore(firstName, lastName) {
-    if (h.whichTeam(firstName, lastName) === 'teamA') {
+function updateGameScore(firstName, lastName, jsonData) {
+    if (h.whichTeam(firstName, lastName, jsonData) === 'teamA') {
         h.currentGame(h.jsonData).teamAScore += 1
-    } else if (h.whichTeam(firstName, lastName) === 'teamB') {
+    } else if (h.whichTeam(firstName, lastName, jsonData) === 'teamB') {
         h.currentGame(h.jsonData).teamBScore += 1
     } else {
         console.log('player not on either team?')
@@ -590,7 +590,7 @@ $('#kickoff-button').click(function() {
 })
 
 $('#goal-button').click(function() {
-    goalHandler()
+    goalHandler(h.jsonData)
 })
 
 $('#final-whistle-button').click(function() {
@@ -617,7 +617,7 @@ $('#generate-test-players-button').click(function() {
 })
 
 $('#consolelog-db-button').click(function() {
-    h.consoleLogDb()
+    h.consoleLogDb(h.jsonData)
     location.reload()
 })
 

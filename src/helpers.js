@@ -71,16 +71,18 @@ export function findPlayerByName(firstName, lastName, jsonData) {
 
 
 export function findPlayersBySkillLevel(playersarr, skill) {  // requires an array of player objects
-    return playersarr.filter(player => player.skillLevel === skill)
+    let playersWithSkillArr = playersarr.filter(player => player.skillLevel === skill)
+    return playersWithSkillArr
 }
 
 export function justNames(playersArr) {  // requires an array of player objects
-    return playersArr.map(function(player) {
+    let playerNamesArr =  playersArr.map(function(player) {
         return player.firstName + ' ' + player.lastName
     })
+    return playerNamesArr
 }
 
-export function whichTeam(firstName, lastName) {
+export function whichTeam(firstName, lastName, jsonData) {
     let name = firstName + ' ' + lastName
     console.log(name)
     if ( currentGame(jsonData).teamA.includes(name) ) {
@@ -100,7 +102,7 @@ export function back() { // used for back-button. Should this be better named?
     location.reload()
 }
 
-export function consoleLogDb() {
+export function consoleLogDb(jsonData) {
     console.log(JSON.stringify(jsonData, null, 2))
 }
 
