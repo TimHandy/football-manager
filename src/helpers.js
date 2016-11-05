@@ -18,7 +18,7 @@ export function getData(callback) {   //QUESTION: is this correct to pass in glo
 }
 
 // Save data to localStorage
-export function saveData() {
+export function saveData(jsonData) {
     const str = JSON.stringify(jsonData)
     localStorage.setItem(LOCAL_STORAGE_NAME, str)  //setItem and getItem are pretty much all you can do with localStorage
     console.log(JSON.stringify(jsonData, null, 2) )
@@ -43,7 +43,9 @@ export function shuffle(array) {  // mutates the array
     // arr = shuffle(arr)
     // console.log(arr)
 
-    let currentIndex = array.length
+    let modifiedArray = array.slice()
+
+    let currentIndex = modifiedArray.length
     let temporaryValue
     let randomIndex
 
@@ -54,17 +56,19 @@ export function shuffle(array) {  // mutates the array
         currentIndex -= 1
 
         // And swap it with the current element.
-        temporaryValue = array[currentIndex]
-        array[currentIndex] = array[randomIndex]
-        array[randomIndex] = temporaryValue
+        temporaryValue = modifiedArray[currentIndex]
+        modifiedArray[currentIndex] = modifiedArray[randomIndex]
+        modifiedArray[randomIndex] = temporaryValue
     }
 
-    return array
+    return modifiedArray
 }
 
-export function findPlayerByName(firstName, lastName) {
-    return jsonData.players.find(player => player.firstName === firstName && player.lastName === lastName)
+export function findPlayerByName(firstName, lastName, jsonData) {
+    let playerObject = jsonData.players.find(player => player.firstName === firstName && player.lastName === lastName)
+    return playerObject
 }
+
 
 export function findPlayersBySkillLevel(playersarr, skill) {  // requires an array of player objects
     return playersarr.filter(player => player.skillLevel === skill)

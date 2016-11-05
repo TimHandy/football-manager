@@ -37,7 +37,7 @@ function chargePlayers(gameFee, jsonData) {
     players.forEach(function(player) {
         let first = player.split(' ')[0]
         let last = player.split(' ')[1]
-        h.findPlayerByName(first, last).moniesOwed += gameFee
+        h.findPlayerByName(first, last, jsonData).moniesOwed += gameFee
     })
     h.currentGame(jsonData)
 }
@@ -58,7 +58,7 @@ function createNewPlayer(firstName, lastName, email, skillLevel) {
 
     h.jsonData.players.push(obj)
     $('.intro-para').addClass('hidden')
-    h.saveData()
+    h.saveData(h.jsonData)
 }
 
 function genTestData() { // Just for testing
@@ -138,8 +138,8 @@ function validateEmail(email) { // quick & dirty regex email validation
 
 // QUESTION: MVC? Move all functions into respective sections... for Model, View, and Controller? Might make it easier to understand what's going on?
 
-function retirePlayerToggle(firstName, lastName) { // sets player as not active. Removes player from stats display
-    let player = h.findPlayerByName(firstName, lastName)
+function retirePlayerToggle(firstName, lastName, jsonData) { // sets player as not active. Removes player from stats display
+    let player = h.findPlayerByName(firstName, lastName, jsonData)
     if (player.moniesOwed !== 0) {
         return `Monies owed is not zero! Unable to retire player. Monies owed: £${player.moniesOwed}`
     } else if (player.active) {
@@ -149,20 +149,20 @@ function retirePlayerToggle(firstName, lastName) { // sets player as not active.
         player.active = true
         delete player.dateDisabled
     }
-    h.saveData()
+    h.saveData(h.jsonData)
 }
 
 // QUESTION: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate? a lot of what I'm doing is storing names in arrays, then when needing to update the player object, I'm finding the actual object to work on, and updating it. This seems a long way around. Should I pass around the actual player object instead? ie. when players are picked, store the array of player objects and can then act directly on them, updating scores etc, and finally at end of game store that player back to the main store? What's the typical approach?
 
-function setSkillLevel(firstName, lastName, skillLevel) {
+function setSkillLevel(firstName, lastName, skillLevel, jsonData) {
     // jsonData is an object, containing a players key, whose value is an array of player objects.
-    let player = h.findPlayerByName(firstName, lastName)
+    let player = h.findPlayerByName(firstName, lastName, jsonData)
     if (player) {
         player.skillLevel = skillLevel
     } else {
         console.log('Player does not exist')
     }
-    h.saveData()
+    h.saveData(h.jsonData)
 }
 
 // QUESTION: When putting data into objects is it standard practice to clean it on the way in, or only when pulling data out? e.g. correct capitalization.
@@ -171,10 +171,10 @@ function editPlayer() {
     // TODO: or just do it from a view of player data? Drop down for player to display their info, then edit required fields and save back to the DB in one go.
 }
 
-function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus or minus £/$
+function updateMoniesOwed(firstName, lastName, currencyValue, jsonData) { // Can be plus or minus £/$
     // update helper.jsonData moniesOwed field
-    h.findPlayerByName(firstName, lastName).moniesOwed += currencyValue
-    h.saveData()
+    h.findPlayerByName(firstName, lastName, jsonData).moniesOwed += currencyValue
+    h.saveData(h.jsonData)
 }
 
 // TODO: write this newSeason function
@@ -191,10 +191,10 @@ function updateMoniesOwed(firstName, lastName, currencyValue) { // Can be plus o
 
 // Pre-game ####################################################################
 
-function playerLate(firstName, lastName, minutesLate) { // TODO: Add this to edit player page?
+function playerLate(firstName, lastName, minutesLate, jsonData) { // TODO: Add this to edit player page?
     let tax = LATE_TAX * minutesLate
 
-    let player = h.findPlayerByName(firstName, lastName)
+    let player = h.findPlayerByName(firstName, lastName, jsonData)
     player.moniesOwed += tax
         // later could have the app do the time keeping, and generate the mins late from the time of the game start?
 }
@@ -232,7 +232,7 @@ function choosePlayers() {
     chosenPlayers = chosenPlayers.map(function(player) {
         return player.value
     }).map(function(player) {
-        return h.findPlayerByName(player.split(' ')[0], player.split(' ')[1])
+        return h.findPlayerByName(player.split(' ')[0], player.split(' ')[1], h.jsonData)
     })
     return chosenPlayers // TODO: not sure I need to return this right now, as the function sets the var chosenPlayers. Dirty. make other functions use this function as a return expression.
 
@@ -294,7 +294,7 @@ function generateTeams(chosenPlayers, callback) {
         callback()
     }
 
-    // helper.saveData()    // don't need to save here, not necessary until the 'Kickoff' button pressed?
+    // helper.saveData(h.jsonData)    // don't need to save here, not necessary until the 'Kickoff' button pressed?
 }
 
 function wrapperforGenerateTeams() { // TODO: this is bad having to make a wrapper. think now I have moved the onclick events to here from the the html I might not need this. It's also a noun, not a verb.
@@ -339,7 +339,7 @@ function generateGame(teamA, teamB) {
     }
 
     h.jsonData.games.push(game)
-    h.saveData()
+    h.saveData(h.jsonData)
 }
 
 function goalHandler() {
@@ -357,13 +357,13 @@ function goalScored(firstName, lastName) {
     if (!h.currentGame(h.jsonData).endTime) {
         h.currentGame(h.jsonData).scorers.push(firstName + ' ' + lastName)
         console.log('Scorer: ' + firstName + ' ' + lastName + ' added')
-        updatePlayerLeagueGoalsScored(firstName, lastName, 1) // TODO: should only be added at final whistle in case game is cancelled  move this, or set a cancel function to reverse the change?
+        updatePlayerLeagueGoalsScored(firstName, lastName, 1, h.jsonData) // TODO: should only be added at final whistle in case game is cancelled  move this, or set a cancel function to reverse the change?
         updateGameScore(firstName, lastName)
         $('.team-a-score').html(h.currentGame(h.jsonData).teamAScore)
         $('.team-b-score').html(h.currentGame(h.jsonData).teamBScore)
             // TODO: player name on the dropdown should default back to 'Player Name' after goal button is pressed
             // TODO: update the players list at the top with goals scored: Team A: Chris Rollins(1), Damo Connop(5) etc.
-        h.saveData()
+        h.saveData(h.jsonData)
     } else {
         console.log('game has already ended')
     }
@@ -379,15 +379,15 @@ function updateGameScore(firstName, lastName) {
     }
 }
 
-function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored) {
-    let player = h.findPlayerByName(firstName, lastName)
+function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored, jsonData) {
+    let player = h.findPlayerByName(firstName, lastName, jsonData)
     console.log(player)
     player.leagueGoalsScored ? player.leagueGoalsScored += 1 : player.leagueGoalsScored = goalsScored // need a ternary because it wouldn't += on a null or missing key
-    h.saveData()
+    h.saveData(h.jsonData)
         // TODO: this should only be added at final whistle, in case game is cancelled
 }
 
-function assignWinningPoints(callback) { // TODO: Looks ripe for refactoring. Tried it, didn't work... try again!
+function assignWinningPoints(jsonData, callback) { // TODO: Looks ripe for refactoring. Tried it, didn't work... try again!
     // if draw
     if (h.currentGame(h.jsonData).endTime) {
         if (h.currentGame(h.jsonData).teamAScore === h.currentGame(h.jsonData).teamBScore) {
@@ -396,13 +396,13 @@ function assignWinningPoints(callback) { // TODO: Looks ripe for refactoring. Tr
                 let name = h.currentGame(h.jsonData).teamA[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
-                updatePlayerLeagueScore(firstName, lastName, 2)
+                updatePlayerLeagueScore(firstName, lastName, 2, jsonData)
             }
             for (let i = 0; i < h.currentGame(h.jsonData).teamB.length; i++) {
                 let name = h.currentGame(h.jsonData).teamB[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
-                updatePlayerLeagueScore(firstName, lastName, 2)
+                updatePlayerLeagueScore(firstName, lastName, 2, jsonData)
             }
             // if teamA won
         } else if (h.currentGame(h.jsonData).teamAScore > h.currentGame(h.jsonData).teamBScore) {
@@ -410,13 +410,13 @@ function assignWinningPoints(callback) { // TODO: Looks ripe for refactoring. Tr
                 let name = h.currentGame(h.jsonData).teamA[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
-                updatePlayerLeagueScore(firstName, lastName, 3)
+                updatePlayerLeagueScore(firstName, lastName, 3, jsonData)
             }
             for (let i = 0; i < h.currentGame(h.jsonData).teamB.length; i++) {
                 let name = h.currentGame(h.jsonData).teamB[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
-                updatePlayerLeagueScore(firstName, lastName, 1)
+                updatePlayerLeagueScore(firstName, lastName, 1, jsonData)
             }
             // if teamB won
         } else if (h.currentGame(h.jsonData).teamAScore < h.currentGame(h.jsonData).teamBScore) {
@@ -424,13 +424,13 @@ function assignWinningPoints(callback) { // TODO: Looks ripe for refactoring. Tr
                 let name = h.currentGame(h.jsonData).teamA[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
-                updatePlayerLeagueScore(firstName, lastName, 1)
+                updatePlayerLeagueScore(firstName, lastName, 1, jsonData)
             }
             for (let i = 0; i < h.currentGame(h.jsonData).teamB.length; i++) {
                 let name = h.currentGame(h.jsonData).teamB[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
-                updatePlayerLeagueScore(firstName, lastName, 3)
+                updatePlayerLeagueScore(firstName, lastName, 3, jsonData)
             }
         }
     } else {
@@ -443,25 +443,25 @@ function assignWinningPoints(callback) { // TODO: Looks ripe for refactoring. Tr
 
 }
 
-function updatePlayerLeagueScore(firstName, lastName, points) {
-    let player = h.findPlayerByName(firstName, lastName)
+function updatePlayerLeagueScore(firstName, lastName, points, jsonData) {
+    let player = h.findPlayerByName(firstName, lastName, jsonData)
     if (player.leagueScore) { // TODO: try with a ternary now it's working
         player.leagueScore += points
     } else {
         player.leagueScore = points
     }
-    h.saveData()
+    h.saveData(h.jsonData)
 }
 
-function finalWhistle() { // TODO: rename with ...Handler?
+function finalWhistle(jsonData) { // TODO: rename with ...Handler?
     setGameEndTime()
-    assignWinningPoints(function() {
-        getLeagueStats(h.jsonData)
+    assignWinningPoints(jsonData, function() {
+        getLeagueStats(jsonData)
 
         $('.final-score').removeClass('hidden')
-        $('.final-score p:nth-of-type(1)').html('Team A: ' + h.currentGame(h.jsonData).teamAScore)
-        $('.final-score p:nth-of-type(2)').html('Team B: ' + h.currentGame(h.jsonData).teamBScore)
-        let gameScorers = h.currentGame(h.jsonData).scorers
+        $('.final-score p:nth-of-type(1)').html('Team A: ' + h.currentGame(jsonData).teamAScore)
+        $('.final-score p:nth-of-type(2)').html('Team B: ' + h.currentGame(jsonData).teamBScore)
+        let gameScorers = h.currentGame(jsonData).scorers
         gameScorers = gameScorers.map(function(player) {
             if (gameScorers.indexOf(player) === gameScorers.length - 1) {
                 return player
@@ -482,7 +482,7 @@ function finalWhistle() { // TODO: rename with ...Handler?
 function setGameEndTime() {
     // update latest game's endTime. This is used to determine whether game complete or not.
     h.currentGame(h.jsonData).endTime = Date()
-    h.saveData()
+    h.saveData(h.jsonData)
 }
 
 // Game stats functions ########################################################
@@ -594,7 +594,7 @@ $('#goal-button').click(function() {
 })
 
 $('#final-whistle-button').click(function() {
-    finalWhistle()
+    finalWhistle(h.jsonData)
 })
 
 $('#back-button').click(function() {
