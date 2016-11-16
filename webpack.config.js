@@ -14,8 +14,8 @@ module.exports = {
     // define output points
 
     output: {
-        path: path.join(__dirname, 'dist'),
-        filename: 'bundle.js'		// call it whatever you want. The index.html file should have it's script tag for the js pointing to this file. e.g.  <script src="./dist/bundle.js"></script>
+        path: path.join(__dirname, 'build'),
+        filename: 'bundle.js'		// call it whatever you want. The index.html file should have it's script tag for the js pointing to this file. e.g.  <script src="./dist/bundle.js"></script>, though webpack will create these automatically if you require the file in your js.
         // you may see this also called something like scripts.min.js so name it that if you want.
     },
     module: {
@@ -39,7 +39,7 @@ module.exports = {
         ]
     },
     devServer: {    // npm i -D webpack-dev-server
-        contentBase: path.join(__dirname, 'dist'),
+        contentBase: path.join(__dirname, 'build'),
         inline: true,    // removes the iframe around the webpage
         stats: 'errors-only'
     },
