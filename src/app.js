@@ -4,7 +4,7 @@ See README.md
 
 Current status:
 
-I know much of these functions are not 'pure' but want to make it so. Recognise now that should be passing in the state as args to function definitions, and returning the result.
+I know many of these functions are not 'pure' but want to make it so. Recognise now that should be passing in the state as args to function definitions, and returning the result.
 
 Requires a LOT of jquery page changes to show/hide sections.
 
@@ -19,15 +19,112 @@ require('./styles.css')
 
 import * as h from './helpers'
 
-const GAME_FEE = 2 // £
+
+/* ====== Model ====== */
+
+let model = {
+    LOCAL_STORAGE_NAME: 'footballData',
+    jsonData: {},
+    GAME_FEE: 2, // £
     // const LATE_TAX = 2       // £/min
     // const LOCAL_STORAGE_NAME = 'footballData'
     // let helper.jsonData
     // let teamA = []
     // let teamB = []
 
-const LATE_TAX = 1
-let teamA
+    LATE_TAX: 1, 
+
+    // Retrieve data from localStorage
+    getData: function(callback) {   
+        const str = localStorage.getItem(model.LOCAL_STORAGE_NAME)
+        model.jsonData = JSON.parse(str)
+        if (!model.jsonData) {
+            model.jsonData = {
+                players: [],
+                games: []
+            }
+        }
+        if (callback) {
+            callback()
+        }
+    },
+
+    // Save data to Local Storage
+    saveData: function(jsonData) {
+        const str = JSON.stringify(jsonData)
+        localStorage.setItem(this.LOCAL_STORAGE_NAME, str)  //setItem and getItem are pretty much all you can do with localStorage
+        console.log(JSON.stringify(jsonData, null, 2) )
+        // TODO: add error handling, like pass back a return val and throw an error if unable to save 
+    },
+
+    deleteAllData: function() {
+        localStorage.removeItem(this.LOCAL_STORAGE_NAME)
+    },
+
+    deleteCurrentGame: function() {
+        this.jsonData.games.splice(-1, 1)
+        this.saveData() // TODO: does this need a callback so that it happens only after the splice above?
+        // TODO: this should remove any scores added to players scores
+        // TODO: add a 'are you sure, yes/no' thing. modal?
+    },
+
+    addNewPlayer: function(firstName, lastName, email, skillLevel) {
+        let obj = {
+            created: Date.now(), // TODO: should this date be human readable? Probably. Or should it be like this so that I could run other functions against the date? e.g. show all games from last month etc.?
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            active: true,
+            skillLevel: skillLevel,
+            leagueScore: 0,
+            leagueGoalsScored: 0
+        }
+
+    // TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? But then I couldn't call createNewPlayer() manually it would need to pull the data from the form. Where should the form validation go? (It currently goes on the createNewPlayerFromForm). MVC pattern: keep the controller logic away from the model logic in separate functions?
+
+        model.jsonData.players.push(obj)
+        model.saveData(model.jsonData)
+    }
+}
+
+
+/* ====== Controller ====== */
+
+let controller = {
+    init: function() {
+        // controller.init() should set up everything... this should be run at the end of this file as soon as the page is visited.
+    },
+
+    createNewPlayer: function(firstName, lastName, email, skillLevel) {
+        model.addNewPlayer(firstName, lastName, email, skillLevel)
+        $('.intro-para').addClass('hidden')
+    },
+
+    deleteAllData: function() {
+        model.deleteAllData()
+        location.reload()  // QUESTION: is this the best way to reload the page?
+    }, 
+    deleteCurrentGame: function() {
+        model.deleteCurrentGame()
+        location.reload()
+    }
+}
+
+
+/* ====== View ====== */
+
+let view = {
+    init: function() {
+
+    },
+    render: function() {
+
+    }   
+        
+}
+
+
+let teamA   // this is bad... how to remove these global vars?
 let teamB
 
 function chargePlayers(gameFee, jsonData) {
@@ -42,37 +139,19 @@ function chargePlayers(gameFee, jsonData) {
     h.currentGame(jsonData)
 }
 
-function createNewPlayer(firstName, lastName, email, skillLevel) {
-    let obj = {
-        created: Date.now(), // TODO: should this date be human readable? Probably. Or should it be like this so that I could run other functions against the date? e.g. show all games from last month etc.?
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        active: true,
-        skillLevel: skillLevel,
-        leagueScore: 0,
-        leagueGoalsScored: 0
-    }
-
-    // TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? But then I couldn't call createNewPlayer() manually it would need to pull the data from the form. Where should the form validation go? (It currently goes on the createNewPlayerFromForm). MVC pattern: keep the controller logic away from the model logic in separate functions?
-
-    h.jsonData.players.push(obj)
-    $('.intro-para').addClass('hidden')
-    h.saveData(h.jsonData)
-}
 
 function genTestData() { // Just for testing
-    createNewPlayer('Tim', 'Handy', 'tim@tim.com', 2)
-    createNewPlayer('Jade', 'Andrews', 'jade@jade.com', 1)
-    createNewPlayer('Sarah', 'Connop', 'sarah@sarah.com', 1)
-    createNewPlayer('Jane', 'Doe', 'jane@jane.com', 2)
-    createNewPlayer('Chris', 'Rollins', 'chris@chris.com', 1)
-    createNewPlayer('Diego', 'Maradona', 'diego@diego.com', 3)
-    createNewPlayer('David', 'Beckham', 'becks@becks.com', 3)
-    createNewPlayer('Misako', 'Cedeira', 'misako@mis.com', 1)
-    createNewPlayer('Karl', 'Cedeira', 'karl@cedeira.com', 2)
-    createNewPlayer('Leah', 'Andrews', 'leah@andrews.com', 1)
-    createNewPlayer('Damo', 'Connop', 'damo@wolves.com', 3)
+    controller.createNewPlayer('Tim', 'Handy', 'tim@tim.com', 2)
+    controller.createNewPlayer('Jade', 'Andrews', 'jade@jade.com', 1)
+    controller.createNewPlayer('Sarah', 'Connop', 'sarah@sarah.com', 1)
+    controller.createNewPlayer('Jane', 'Doe', 'jane@jane.com', 2)
+    controller.createNewPlayer('Chris', 'Rollins', 'chris@chris.com', 1)
+    controller.createNewPlayer('Diego', 'Maradona', 'diego@diego.com', 3)
+    controller.createNewPlayer('David', 'Beckham', 'becks@becks.com', 3)
+    controller.createNewPlayer('Misako', 'Cedeira', 'misako@mis.com', 1)
+    controller.createNewPlayer('Karl', 'Cedeira', 'karl@cedeira.com', 2)
+    controller.createNewPlayer('Leah', 'Andrews', 'leah@andrews.com', 1)
+    controller.createNewPlayer('Damo', 'Connop', 'damo@wolves.com', 3)
 
     $('.gen-test-data').addClass('hidden')
 }
@@ -113,7 +192,7 @@ function createNewPlayerFromForm() {
         $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden')
         return
     } else {
-        createNewPlayer(firstName, lastName, email, skillLevel)
+        controller.createNewPlayer(firstName, lastName, email, skillLevel)
         $('#user-input-error').addClass('hidden')
         $('#user-input-error').html('<h3>' + 'Player added successfully' + '</h3>').removeClass('hidden')
     }
@@ -122,11 +201,11 @@ function createNewPlayerFromForm() {
 }
 
 function emailExists(email) {       // QUESTION: helper function; keep this in a module? or close by to where it's used?
-    return h.jsonData.players.some(player => player.email === email)
+    return model.jsonData.players.some(player => player.email === email)
 }
 
 function fullNameExists(firstName, lastName) {
-    return h.jsonData.players.some(player => player.firstName === firstName && player.lastName === lastName)
+    return model.jsonData.players.some(player => player.firstName === firstName && player.lastName === lastName)
 }
 
 function validateEmail(email) { // quick & dirty regex email validation
@@ -149,7 +228,7 @@ function retirePlayerToggle(firstName, lastName, jsonData) { // sets player as n
         player.active = true
         delete player.dateDisabled
     }
-    h.saveData(h.jsonData)
+    model.saveData(model.jsonData)
 }
 
 // QUESTION: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate? a lot of what I'm doing is storing names in arrays, then when needing to update the player object, I'm finding the actual object to work on, and updating it. This seems a long way around. Should I pass around the actual player object instead? ie. when players are picked, store the array of player objects and can then act directly on them, updating scores etc, and finally at end of game store that player back to the main store? What's the typical approach?
@@ -162,7 +241,7 @@ function setSkillLevel(firstName, lastName, skillLevel, jsonData) {
     } else {
         console.log('Player does not exist')
     }
-    h.saveData(h.jsonData)
+    model.saveData(model.jsonData)
 }
 
 // QUESTION: When putting data into objects is it standard practice to clean it on the way in, or only when pulling data out? e.g. correct capitalization.
@@ -173,8 +252,7 @@ function editPlayer() {
 
 function updateMoniesOwed(firstName, lastName, currencyValue, jsonData) { // Can be plus or minus £/$
     // update helper.jsonData moniesOwed field
-    h.findPlayerByName(firstName, lastName, jsonData).moniesOwed += currencyValue
-    h.saveData(h.jsonData)
+    h.findPlayerByName(firstName, lastName, jsonData).moniesOwed += model.saveData(model.jsonData)
 }
 
 // TODO: write this newSeason function
@@ -201,7 +279,7 @@ function playerLate(firstName, lastName, minutesLate, jsonData) { // TODO: Add t
 
 function displayAvailablePlayers() { // QUESTION: is this mixing controller and view?
     // generate an li for each player in players
-    let players = h.justNames(h.jsonData.players).sort() // ['Tim Handy', 'First Last']
+    let players = h.justNames(model.jsonData.players).sort() // ['Tim Handy', 'First Last']
     let list = $('#select-players ul')
     $(list).html('')
     players.forEach(function(player) {
@@ -231,7 +309,7 @@ function choosePlayers() {
     chosenPlayers = chosenPlayers.map(function(player) {
         return player.value
     }).map(function(player) {
-        return h.findPlayerByName(player.split(' ')[0], player.split(' ')[1], h.jsonData)
+        return h.findPlayerByName(player.split(' ')[0], player.split(' ')[1], model.jsonData)
     })
     return chosenPlayers // TODO: not sure I need to return this right now, as the function sets the var chosenPlayers. Dirty. make other functions use this function as a return expression.
 
@@ -293,7 +371,7 @@ function generateTeams(chosenPlayers, callback) {
         callback()
     }
 
-    // helper.saveData(h.jsonData)    // don't need to save here, not necessary until the 'Kickoff' button pressed?
+    // helper.saveData(model.jsonData)    // don't need to save here, not necessary until the 'Kickoff' button pressed?
 }
 
 function wrapperforGenerateTeams() { // TODO: this is bad having to make a wrapper. think now I have moved the onclick events to here from the the html I might not need this. It's also a noun, not a verb.
@@ -304,9 +382,9 @@ function wrapperforGenerateTeams() { // TODO: this is bad having to make a wrapp
 
 function kickOff() {
     generateGame(teamA, teamB) // FIXME: this should not have a global vars for teamA and B, they should be stored in jsonData, and be passed in as a args.
-    chargePlayers(GAME_FEE, h.jsonData)
+    chargePlayers(model.GAME_FEE, model.jsonData)
     populatePlayerDropdown(teamA.concat(teamB))
-    $('.game-date').html(h.currentGame(h.jsonData).date)
+    $('.game-date').html(h.currentGame(model.jsonData).date)
     $('.game-date-div').removeClass('hidden')
     $('.game').removeClass('hidden')
     $('.goal').removeClass('hidden')
@@ -337,8 +415,8 @@ function generateGame(teamA, teamB) {
         endTime: undefined // QUESTION: undefined or null?? which is most appropriate? Think undefined is for properties and vals, and null is for objects.
     }
 
-    h.jsonData.games.push(game)
-    h.saveData(h.jsonData)
+    model.jsonData.games.push(game)
+    model.saveData(model.jsonData)
 }
 
 function goalHandler(jsonData) {
@@ -353,16 +431,16 @@ function goalHandler(jsonData) {
 }
 
 function goalScored(firstName, lastName, jsonData) {
-    if (!h.currentGame(h.jsonData).endTime) {
-        h.currentGame(h.jsonData).scorers.push(firstName + ' ' + lastName)
+    if (!h.currentGame(model.jsonData).endTime) {
+        h.currentGame(model.jsonData).scorers.push(firstName + ' ' + lastName)
         console.log('Scorer: ' + firstName + ' ' + lastName + ' added')
-        updatePlayerLeagueGoalsScored(firstName, lastName, 1, h.jsonData) // TODO: should only be added at final whistle in case game is cancelled  move this, or set a cancel function to reverse the change?
+        updatePlayerLeagueGoalsScored(firstName, lastName, 1, model.jsonData) // TODO: should only be added at final whistle in case game is cancelled  move this, or set a cancel function to reverse the change?
         updateGameScore(firstName, lastName, jsonData)
-        $('.team-a-score').html(h.currentGame(h.jsonData).teamAScore)
-        $('.team-b-score').html(h.currentGame(h.jsonData).teamBScore)
+        $('.team-a-score').html(h.currentGame(model.jsonData).teamAScore)
+        $('.team-b-score').html(h.currentGame(model.jsonData).teamBScore)
             // TODO: player name on the dropdown should default back to 'Player Name' after goal button is pressed
             // TODO: update the players list at the top with goals scored: Team A: Chris Rollins(1), Damo Connop(5) etc.
-        h.saveData(h.jsonData)
+        model.saveData(model.jsonData)
     } else {
         console.log('game has already ended')
     }
@@ -370,9 +448,9 @@ function goalScored(firstName, lastName, jsonData) {
 
 function updateGameScore(firstName, lastName, jsonData) {
     if (h.whichTeam(firstName, lastName, jsonData) === 'teamA') {
-        h.currentGame(h.jsonData).teamAScore += 1
+        h.currentGame(model.jsonData).teamAScore += 1
     } else if (h.whichTeam(firstName, lastName, jsonData) === 'teamB') {
-        h.currentGame(h.jsonData).teamBScore += 1
+        h.currentGame(model.jsonData).teamBScore += 1
     } else {
         console.log('player not on either team?')
     }
@@ -382,51 +460,51 @@ function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored, jsonDat
     let player = h.findPlayerByName(firstName, lastName, jsonData)
     console.log(player)
     player.leagueGoalsScored ? player.leagueGoalsScored += 1 : player.leagueGoalsScored = goalsScored // need a ternary because it wouldn't += on a null or missing key
-    h.saveData(h.jsonData)
+    model.saveData(model.jsonData)
         // TODO: this should only be added at final whistle, in case game is cancelled
 }
 
 function assignWinningPoints(jsonData, callback) { // TODO: Looks ripe for refactoring. Tried it, didn't work... try again!
     // if draw
-    if (h.currentGame(h.jsonData).endTime) {
-        if (h.currentGame(h.jsonData).teamAScore === h.currentGame(h.jsonData).teamBScore) {
+    if (h.currentGame(model.jsonData).endTime) {
+        if (h.currentGame(model.jsonData).teamAScore === h.currentGame(model.jsonData).teamBScore) {
             // each player on both sides gets 2 leagueScore point
-            for (let i = 0; i < h.currentGame(h.jsonData).teamA.length; i++) { // TODO: use a .map here?
-                let name = h.currentGame(h.jsonData).teamA[i].split(' ')
+            for (let i = 0; i < h.currentGame(model.jsonData).teamA.length; i++) { // TODO: use a .map here?
+                let name = h.currentGame(model.jsonData).teamA[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
                 updatePlayerLeagueScore(firstName, lastName, 2, jsonData)
             }
-            for (let i = 0; i < h.currentGame(h.jsonData).teamB.length; i++) {
-                let name = h.currentGame(h.jsonData).teamB[i].split(' ')
+            for (let i = 0; i < h.currentGame(model.jsonData).teamB.length; i++) {
+                let name = h.currentGame(model.jsonData).teamB[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
                 updatePlayerLeagueScore(firstName, lastName, 2, jsonData)
             }
             // if teamA won
-        } else if (h.currentGame(h.jsonData).teamAScore > h.currentGame(h.jsonData).teamBScore) {
-            for (let i = 0; i < h.currentGame(h.jsonData).teamA.length; i++) {
-                let name = h.currentGame(h.jsonData).teamA[i].split(' ')
+        } else if (h.currentGame(model.jsonData).teamAScore > h.currentGame(model.jsonData).teamBScore) {
+            for (let i = 0; i < h.currentGame(model.jsonData).teamA.length; i++) {
+                let name = h.currentGame(model.jsonData).teamA[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
                 updatePlayerLeagueScore(firstName, lastName, 3, jsonData)
             }
-            for (let i = 0; i < h.currentGame(h.jsonData).teamB.length; i++) {
-                let name = h.currentGame(h.jsonData).teamB[i].split(' ')
+            for (let i = 0; i < h.currentGame(model.jsonData).teamB.length; i++) {
+                let name = h.currentGame(model.jsonData).teamB[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
                 updatePlayerLeagueScore(firstName, lastName, 1, jsonData)
             }
             // if teamB won
-        } else if (h.currentGame(h.jsonData).teamAScore < h.currentGame(h.jsonData).teamBScore) {
-            for (let i = 0; i < h.currentGame(h.jsonData).teamA.length; i++) {
-                let name = h.currentGame(h.jsonData).teamA[i].split(' ')
+        } else if (h.currentGame(model.jsonData).teamAScore < h.currentGame(model.jsonData).teamBScore) {
+            for (let i = 0; i < h.currentGame(model.jsonData).teamA.length; i++) {
+                let name = h.currentGame(model.jsonData).teamA[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
                 updatePlayerLeagueScore(firstName, lastName, 1, jsonData)
             }
-            for (let i = 0; i < h.currentGame(h.jsonData).teamB.length; i++) {
-                let name = h.currentGame(h.jsonData).teamB[i].split(' ')
+            for (let i = 0; i < h.currentGame(model.jsonData).teamB.length; i++) {
+                let name = h.currentGame(model.jsonData).teamB[i].split(' ')
                 let firstName = name[0]
                 let lastName = name[1]
                 updatePlayerLeagueScore(firstName, lastName, 3, jsonData)
@@ -449,7 +527,7 @@ function updatePlayerLeagueScore(firstName, lastName, points, jsonData) {
     } else {
         player.leagueScore = points
     }
-    h.saveData(h.jsonData)
+    model.saveData(model.jsonData)
 }
 
 function finalWhistle(jsonData) { // TODO: rename with ...Handler?
@@ -480,8 +558,8 @@ function finalWhistle(jsonData) { // TODO: rename with ...Handler?
 
 function setGameEndTime() {
     // update latest game's endTime. This is used to determine whether game complete or not.
-    h.currentGame(h.jsonData).endTime = Date()
-    h.saveData(h.jsonData)
+    h.currentGame(model.jsonData).endTime = Date()
+    model.saveData(model.jsonData)
 }
 
 // Game stats functions ########################################################
@@ -512,53 +590,53 @@ function getLeagueStats(jsonData) { // Mixed model and view? ...this also displa
 }
 
 function displayRawData() {
-    document.write(localStorage.getItem(h.LOCAL_STORAGE_NAME))
+    document.write(localStorage.getItem(model.LOCAL_STORAGE_NAME))
 }
 
 // If database is present and game ongoing, i.e. no endTime, restore previous gamestate
 $(document).ready(function() {
 
-    h.getData(function() {
-        if (h.jsonData.players.length === 0) {
+    model.getData(function() {
+        if (model.jsonData.players.length === 0) {
             $('.intro-para').removeClass('hidden')
         }
-        if (h.jsonData.players.length > 0) {
+        if (model.jsonData.players.length > 0) {
             $('.gen-test-data').addClass('hidden')
             $('.intro-para').addClass('hidden')
         }
 
-        if (h.jsonData.games.length > 0) {
-            getLeagueStats(h.jsonData)
+        if (model.jsonData.games.length > 0) {
+            getLeagueStats(model.jsonData)
             $('#league-stats').removeClass('hidden')
         }
 
         // TODO: make this into a 'recover state' type function that can be called in several places.
-        if (localStorage.getItem(h.LOCAL_STORAGE_NAME) && h.currentGame(h.jsonData) && !h.currentGame(h.jsonData).hasOwnProperty('endTime')) {
+        if (localStorage.getItem(h.LOCAL_STORAGE_NAME) && h.currentGame(model.jsonData) && !h.currentGame(model.jsonData).hasOwnProperty('endTime')) {
             $('.intro-para').addClass('hidden') // TODO: this is a lot of jquery... might want to combine some of this into divs?
             $('.gen-test-data').addClass('hidden')
             $('#select-players-button').addClass('hidden')
             $('#new-player-button').addClass('hidden')
-            $('.game-date').html(h.currentGame(h.jsonData).date) // TODO: chop off the GMT bit: Tue Oct 18 2016 16:52:29 GMT+0100 (BST)
+            $('.game-date').html(h.currentGame(model.jsonData).date) // TODO: chop off the GMT bit: Tue Oct 18 2016 16:52:29 GMT+0100 (BST)
             $('.game-date-div').removeClass('hidden')
             $('.players').removeClass('hidden')
             $('.available-players').addClass('hidden')
             $('.new-player-form').addClass('hidden')
-            $('.game span').html(h.currentGame(h.jsonData).date)
+            $('.game span').html(h.currentGame(model.jsonData).date)
             $('.goal').removeClass('hidden')
             $('.final-whistle').removeClass('hidden')
             $('.kickoff').addClass('hidden')
             $('.generate-teams').addClass('hidden')
-            $('#team-a').html(h.currentGame(h.jsonData).teamA.map(function(name) {
+            $('#team-a').html(h.currentGame(model.jsonData).teamA.map(function(name) {
                 return name + ', '
             }))
-            $('#team-b').html(h.currentGame(h.jsonData).teamB.map(function(name) {
+            $('#team-b').html(h.currentGame(model.jsonData).teamB.map(function(name) {
                 return name + ', '
             }))
-            $('.team-a-score').html(h.currentGame(h.jsonData).teamAScore)
-            $('.team-b-score').html(h.currentGame(h.jsonData).teamBScore)
+            $('.team-a-score').html(h.currentGame(model.jsonData).teamAScore)
+            $('.team-b-score').html(h.currentGame(model.jsonData).teamBScore)
             $('.delete-game').removeClass('hidden')
             $('#back-button').addClass('hidden')
-            populatePlayerDropdown(h.currentGame(h.jsonData).teamA.concat(h.currentGame(h.jsonData).teamB))
+            populatePlayerDropdown(h.currentGame(model.jsonData).teamA.concat(h.currentGame(model.jsonData).teamB))
         } else {
             //$('.gen-test-data').removeClass('hidden')
             $('#back-button').addClass('hidden')
@@ -570,6 +648,11 @@ $(document).ready(function() {
 
 $('#new-player-button').click(function() {
     toggleNewPlayer()
+})
+
+//clear form fields on focus
+$('.input-lg').focus(function() {
+    this.value = ''
 })
 
 $('#new-player-submit-button').click(function() {
@@ -589,11 +672,11 @@ $('#kickoff-button').click(function() {
 })
 
 $('#goal-button').click(function() {
-    goalHandler(h.jsonData)
+    goalHandler(model.jsonData)
 })
 
 $('#final-whistle-button').click(function() {
-    finalWhistle(h.jsonData)
+    finalWhistle(model.jsonData)
 })
 
 $('#back-button').click(function() {
@@ -601,12 +684,11 @@ $('#back-button').click(function() {
 })
 
 $('#delete-game-button').click(function() {
-    h.deleteCurrentGame(h.jsonData)
-    location.reload()
+    controller.deleteCurrentGame()
 })
 
 $('#delete-db-button').click(function() {
-    h.deleteAllData()
+    controller.deleteAllData()
     location.reload()
 })
 
@@ -616,7 +698,7 @@ $('#generate-test-players-button').click(function() {
 })
 
 $('#consolelog-db-button').click(function() {
-    h.consoleLogDb(h.jsonData)
+    h.consoleLogDb(model.jsonData)
     location.reload()
 })
 
