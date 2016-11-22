@@ -26,13 +26,41 @@ let model = {
     LOCAL_STORAGE_NAME: 'footballData',
     jsonData: {},
     GAME_FEE: 2, // £
+    LATE_TAX: 1, 
     // const LATE_TAX = 2       // £/min
     // const LOCAL_STORAGE_NAME = 'footballData'
     // let helper.jsonData
     // let teamA = []
     // let teamB = []
 
-    LATE_TAX: 1, 
+    shuffle: function(array) {  // mutates the array
+    // Fisher-Yates (aka Knuth) shuffle
+    // Used like so:
+    // let arr = [2, 11, 37, 42]
+    // arr = shuffle(arr)
+    // console.log(arr)
+
+        let modifiedArray = array.slice()
+
+        let currentIndex = modifiedArray.length
+        let temporaryValue
+        let randomIndex
+
+    // While there remain elements to shuffle...
+        while (currentIndex !== 0) {
+        // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex)
+            currentIndex -= 1
+
+        // And swap it with the current element.
+            temporaryValue = modifiedArray[currentIndex]
+            modifiedArray[currentIndex] = modifiedArray[randomIndex]
+            modifiedArray[randomIndex] = temporaryValue
+        }
+
+        return modifiedArray
+    },
+
 
     // Retrieve data from localStorage
     getData: function(callback) {   
@@ -270,7 +298,7 @@ function updateMoniesOwed(firstName, lastName, currencyValue, jsonData) { // Can
 // Pre-game ####################################################################
 
 function playerLate(firstName, lastName, minutesLate, jsonData) { // TODO: Add this to edit player page?
-    let tax = LATE_TAX * minutesLate
+    let tax = model.LATE_TAX * minutesLate
 
     let player = h.findPlayerByName(firstName, lastName, jsonData)
     player.moniesOwed += tax
@@ -324,9 +352,9 @@ function generateTeams(chosenPlayers, callback) {
     let players = chosenPlayers.slice(0) // QUESTION: makes a copy of chosenPlayers  ['Tim Handy', 'Jade Andrews']. Is this the right thing to do so as to not mutate the original array?
         // TODO: validate the generateTeams button, there must be > 1 players selected
 
-    let threeStarPlayers = h.shuffle(h.justNames(h.findPlayersBySkillLevel(players, 3))) // ['David Beckham', 'Diego Maradonna']. TODO Think I've just created objects (choosePlayers) from strings and then back again to strings in here!
-    let twoStarPlayers = h.shuffle(h.justNames(h.findPlayersBySkillLevel(players, 2)))
-    let oneStarPlayers = h.shuffle(h.justNames(h.findPlayersBySkillLevel(players, 1)))
+    let threeStarPlayers = model.shuffle(h.justNames(h.findPlayersBySkillLevel(players, 3))) // ['David Beckham', 'Diego Maradonna']. TODO Think I've just created objects (choosePlayers) from strings and then back again to strings in here!
+    let twoStarPlayers = model.shuffle(h.justNames(h.findPlayersBySkillLevel(players, 2)))
+    let oneStarPlayers = model.shuffle(h.justNames(h.findPlayersBySkillLevel(players, 1)))
 
     let lineUp = threeStarPlayers.concat(twoStarPlayers, oneStarPlayers)
     console.log('Lineup: ', lineUp) // ['David Beckham', 'Diego Maradonna', "Damo Connop", "Tim Handy", "Jane Doe", "Karl Cedeira", "Chris Rollins", "Jade Andrews", "Leah Andrews"]
