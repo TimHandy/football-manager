@@ -16,13 +16,14 @@ This file is getting large. Need to move to some other modules, maybe a game mod
 
 'use strict'
 require('./styles.css')
+let $ = require('jquery')
 
 import * as h from './helpers'
 
 
 /* ====== Model ====== */
 
-let model = {
+let model = module.exports = {
     LOCAL_STORAGE_NAME: 'footballData',
     jsonData: {},
     GAME_FEE: 2, // £
@@ -31,7 +32,7 @@ let model = {
     // const LOCAL_STORAGE_NAME = 'footballData'
     // let helper.jsonData
     // let teamA = []
-    // let teamB = []
+    // let teamB = []import
 
     shuffle: function(array) {  // mutates the array
     // Fisher-Yates (aka Knuth) shuffle
@@ -112,6 +113,11 @@ let model = {
 
         model.jsonData.players.push(obj)
         model.saveData(model.jsonData)
+    },
+
+    findPlayerByName: function(firstName, lastName, jsonData) {
+        let playerObject = jsonData.players.find(player => player.firstName === firstName && player.lastName === lastName)
+        return playerObject
     }
 }
 
@@ -162,7 +168,7 @@ function chargePlayers(gameFee, jsonData) {
     players.forEach(function(player) {
         let first = player.split(' ')[0]
         let last = player.split(' ')[1]
-        h.findPlayerByName(first, last, jsonData).moniesOwed += gameFee
+        model.findPlayerByName(first, last, jsonData).moniesOwed += gameFee
     })
     h.currentGame(jsonData)
 }
@@ -216,7 +222,7 @@ function createNewPlayerFromForm() {
         $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden')
         return
     } else if (skillLevel === 'Skill level (1-3)' || !(skillLevel > 0 && skillLevel < 4)) {
-        let msg = 'Skill level is required'
+        let msg = 'Skill level is required: 1-3'
         $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden')
         return
     } else {
@@ -245,43 +251,11 @@ function validateEmail(email) { // quick & dirty regex email validation
 
 // QUESTION: MVC? Move all functions into respective sections... for Model, View, and Controller? Might make it easier to understand what's going on?
 
-function retirePlayerToggle(firstName, lastName, jsonData) { // sets player as not active. Removes player from stats display
-    let player = h.findPlayerByName(firstName, lastName, jsonData)
-    if (player.moniesOwed !== 0) {
-        return `Monies owed is not zero! Unable to retire player. Monies owed: £${player.moniesOwed}`
-    } else if (player.active) {
-        player.active = false
-        player.dateDisabled = Date()
-    } else if (!player.active) {
-        player.active = true
-        delete player.dateDisabled
-    }
-    model.saveData(model.jsonData)
-}
 
 // QUESTION: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate? a lot of what I'm doing is storing names in arrays, then when needing to update the player object, I'm finding the actual object to work on, and updating it. This seems a long way around. Should I pass around the actual player object instead? ie. when players are picked, store the array of player objects and can then act directly on them, updating scores etc, and finally at end of game store that player back to the main store? What's the typical approach?
 
-function setSkillLevel(firstName, lastName, skillLevel, jsonData) {
-    // jsonData is an object, containing a players key, whose value is an array of player objects.
-    let player = h.findPlayerByName(firstName, lastName, jsonData)
-    if (player) {
-        player.skillLevel = skillLevel
-    } else {
-        console.log('Player does not exist')
-    }
-    model.saveData(model.jsonData)
-}
 
 // QUESTION: When putting data into objects is it standard practice to clean it on the way in, or only when pulling data out? e.g. correct capitalization.
-
-function editPlayer() {
-    // TODO: or just do it from a view of player data? Drop down for player to display their info, then edit required fields and save back to the DB in one go.
-}
-
-function updateMoniesOwed(firstName, lastName, currencyValue, jsonData) { // Can be plus or minus £/$
-    // update helper.jsonData moniesOwed field
-    h.findPlayerByName(firstName, lastName, jsonData).moniesOwed += model.saveData(model.jsonData)
-}
 
 // TODO: write this newSeason function
 // function newSeason() {
@@ -297,13 +271,6 @@ function updateMoniesOwed(firstName, lastName, currencyValue, jsonData) { // Can
 
 // Pre-game ####################################################################
 
-function playerLate(firstName, lastName, minutesLate, jsonData) { // TODO: Add this to edit player page?
-    let tax = model.LATE_TAX * minutesLate
-
-    let player = h.findPlayerByName(firstName, lastName, jsonData)
-    player.moniesOwed += tax
-        // later could have the app do the time keeping, and generate the mins late from the time of the game start?
-}
 
 function displayAvailablePlayers() { // QUESTION: is this mixing controller and view?
     // generate an li for each player in players
@@ -337,7 +304,7 @@ function choosePlayers() {
     chosenPlayers = chosenPlayers.map(function(player) {
         return player.value
     }).map(function(player) {
-        return h.findPlayerByName(player.split(' ')[0], player.split(' ')[1], model.jsonData)
+        return model.findPlayerByName(player.split(' ')[0], player.split(' ')[1], model.jsonData)
     })
     return chosenPlayers // TODO: not sure I need to return this right now, as the function sets the var chosenPlayers. Dirty. make other functions use this function as a return expression.
 
@@ -485,7 +452,7 @@ function updateGameScore(firstName, lastName, jsonData) {
 }
 
 function updatePlayerLeagueGoalsScored(firstName, lastName, goalsScored, jsonData) {
-    let player = h.findPlayerByName(firstName, lastName, jsonData)
+    let player = model.findPlayerByName(firstName, lastName, jsonData)
     console.log(player)
     player.leagueGoalsScored ? player.leagueGoalsScored += 1 : player.leagueGoalsScored = goalsScored // need a ternary because it wouldn't += on a null or missing key
     model.saveData(model.jsonData)
@@ -549,7 +516,7 @@ function assignWinningPoints(jsonData, callback) { // TODO: Looks ripe for refac
 }
 
 function updatePlayerLeagueScore(firstName, lastName, points, jsonData) {
-    let player = h.findPlayerByName(firstName, lastName, jsonData)
+    let player = model.findPlayerByName(firstName, lastName, jsonData)
     if (player.leagueScore) { // TODO: try with a ternary now it's working
         player.leagueScore += points
     } else {
@@ -617,11 +584,8 @@ function getLeagueStats(jsonData) { // Mixed model and view? ...this also displa
     // IDEA: Scores are emailed out to all active players.
 }
 
-function displayRawData() {
-    document.write(localStorage.getItem(model.LOCAL_STORAGE_NAME))
-}
-
 // If database is present and game ongoing, i.e. no endTime, restore previous gamestate
+// FIXME: this has stopped working
 $(document).ready(function() {
 
     model.getData(function() {

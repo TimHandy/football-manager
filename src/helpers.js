@@ -1,9 +1,3 @@
-export function findPlayerByName(firstName, lastName, jsonData) {
-    let playerObject = jsonData.players.find(player => player.firstName === firstName && player.lastName === lastName)
-    return playerObject
-}
-
-
 export function findPlayersBySkillLevel(playersarr, skill) {  // requires an array of player objects
     let playersWithSkillArr = playersarr.filter(player => player.skillLevel === skill)
     return playersWithSkillArr
@@ -39,7 +33,6 @@ export function back() { // used for back-button. Should this be better named?
 export function consoleLogDb(jsonData) {
     console.log(JSON.stringify(jsonData, null, 2))
 }
-
 
 export function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.toLowerCase().slice(1)
