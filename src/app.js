@@ -20,6 +20,7 @@ let $ = require('jquery')
 
 import * as h from './helpers'
 import model from './model'
+import view from './view'
 import controller from './controller'
 import * as player from './player'
 import {genTestData} from './testData'
@@ -28,6 +29,7 @@ import {genTestData} from './testData'
 
 let teamA   // this is bad... how to remove these global vars?
 let teamB
+let chosenPlayers = [] // FIXME: dirty global variable, refactor to remove
 
 
 function toggleNewPlayer() { // Show the new player form
@@ -42,43 +44,13 @@ function toggleNewPlayer() { // Show the new player form
 // QUESTION: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate? a lot of what I'm doing is storing names in arrays, then when needing to update the player object, I'm finding the actual object to work on, and updating it. This seems a long way around. Should I pass around the actual player object instead? ie. when players are picked, store the array of player objects and can then act directly on them, updating scores etc, and finally at end of game store that player back to the main store? What's the typical approach?
 
 
-// QUESTION: When putting data into objects is it standard practice to clean it on the way in, or only when pulling data out? e.g. correct capitalization.
-
-// TODO: write this newSeason function
-// function newSeason() {
-//   // Archive off this season's data (previousGameStats and helper.jsonData to another file) then wipe
-//   // Create a new localStorage entry and copy all data to that one
-//   // This seasons data, including all stats, but leaving players and moniesOwed (reset their scores)
-// }
-
-// function newFixture() {
-//   // Generate a new game date for the calendar and maybe email the 'active' status players
-// }
+// Pre-game features ####################################################################
 
 
-// Pre-game ####################################################################
 
 
-function displayAvailablePlayers() { // QUESTION: is this mixing controller and view?
-    // generate an li for each player in players
-    let players = h.justNames(model.jsonData.players).sort() // ['Tim Handy', 'First Last']
-    let list = $('#select-players ul')
-    $(list).html('')
-    players.forEach(function(player) {
-        //$(list).append(Mustache.render(template, player))
-            // FIXME: Mustache: why does this render a load of spaces/tabs? and a newline in the html? see inspect on one of the li elements.
-        $(list).append('<li><input type="checkbox" name="player" value="' + player + '"> ' + player + '</li>')
-    })
-    $('li').addClass('li-checkbox') // rquired after adding the dynamic li players, otherwise the checkboxes were tiny
-    $('.intro-para').addClass('hidden')
-    $('.available-players').removeClass('hidden')
-    $('.generate-teams').removeClass('hidden')
-    $('#select-players-button').addClass('hidden')
-    $('#new-player-button').addClass('hidden')
-    $('#back-button').removeClass('hidden')
-}
 
-let chosenPlayers = [] // FIXME: dirty global variable, refactor to remove
+
 function choosePlayers() {
     let players = document.getElementsByName('player')
     players = Array.prototype.slice.call(players)
@@ -439,7 +411,7 @@ $('#new-player-submit-button').click(function() {
 })
 
 $('#select-players-button').click(function() {
-    displayAvailablePlayers()
+    controller.getAndDisplayAvailablePlayers()
 })
 
 $('#generate-teams-button').click(function() {

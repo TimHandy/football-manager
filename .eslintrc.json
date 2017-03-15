@@ -47,7 +47,7 @@
         "eqeqeq": [1, "smart"],
         "generator-star-spacing": [2, { "before": true, "after": true }],
         "handle-callback-err": [2, "^(err|error)$" ],
-        "indent": ["error", 4, { "SwitchCase": 4 }],
+        "indent": ["error", 2, { "SwitchCase": 2 }],
         "key-spacing": [2, { "beforeColon": false, "afterColon": true }],
         "keyword-spacing": [2, { "before": true, "after": true }],
         "new-cap": [2, { "newIsCap": true, "capIsNew": false }],

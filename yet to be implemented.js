@@ -73,3 +73,16 @@ function chargePlayers(gameFee, jsonData) {
     })
     h.currentGame(jsonData)
 }
+
+
+
+// TODO: write this newSeason function
+// function newSeason() {
+//   // Archive off this season's data (previousGameStats and helper.jsonData to another file) then wipe
+//   // Create a new localStorage entry and copy all data to that one
+//   // This seasons data, including all stats, but leaving players and moniesOwed (reset their scores)
+// }
+
+// function newFixture() {
+//   // Generate a new game date for the calendar and maybe email the 'active' status players
+// }
