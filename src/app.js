@@ -22,40 +22,13 @@ import * as h from './helpers'
 import model from './model'
 import controller from './controller'
 import * as player from './player'
+import {genTestData} from './testData'
 
 
 
 let teamA   // this is bad... how to remove these global vars?
 let teamB
 
-function chargePlayers(gameFee, jsonData) {
-    let teamA = h.currentGame(jsonData).teamA
-    let teamB = h.currentGame(jsonData).teamB
-    let players = teamA.concat(teamB)
-    players.forEach(function(player) {
-        let first = player.split(' ')[0]
-        let last = player.split(' ')[1]
-        model.findPlayerByName(first, last, jsonData).moniesOwed += gameFee
-    })
-    h.currentGame(jsonData)
-}
-
-
-function genTestData() { // Just for testing
-    controller.createNewPlayer('Tim', 'Handy', 'tim@tim.com', 2)
-    controller.createNewPlayer('Jade', 'Andrews', 'jade@jade.com', 1)
-    controller.createNewPlayer('Sarah', 'Connop', 'sarah@sarah.com', 1)
-    controller.createNewPlayer('Jane', 'Doe', 'jane@jane.com', 2)
-    controller.createNewPlayer('Chris', 'Rollins', 'chris@chris.com', 1)
-    controller.createNewPlayer('Diego', 'Maradona', 'diego@diego.com', 3)
-    controller.createNewPlayer('David', 'Beckham', 'becks@becks.com', 3)
-    controller.createNewPlayer('Misako', 'Cedeira', 'misako@mis.com', 1)
-    controller.createNewPlayer('Karl', 'Cedeira', 'karl@cedeira.com', 2)
-    controller.createNewPlayer('Leah', 'Andrews', 'leah@andrews.com', 1)
-    controller.createNewPlayer('Damo', 'Connop', 'damo@wolves.com', 3)
-
-    $('.gen-test-data').addClass('hidden')
-}
 
 function toggleNewPlayer() { // Show the new player form
     $('.new-player-form').removeClass('hidden')
@@ -64,10 +37,6 @@ function toggleNewPlayer() { // Show the new player form
     $('#select-players-button').addClass('hidden')
     $('#back-button').removeClass('hidden')
 }
-
-
-
-// QUESTION: MVC? Move all functions into respective sections... for Model, View, and Controller? Might make it easier to understand what's going on?
 
 
 // QUESTION: appears to be a lot of firstName, lastName being passed around... can I fix that??? What would be simpler or more appropriate? a lot of what I'm doing is storing names in arrays, then when needing to update the player object, I'm finding the actual object to work on, and updating it. This seems a long way around. Should I pass around the actual player object instead? ie. when players are picked, store the array of player objects and can then act directly on them, updating scores etc, and finally at end of game store that player back to the main store? What's the typical approach?

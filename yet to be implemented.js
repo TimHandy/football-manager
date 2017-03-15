@@ -61,3 +61,15 @@ function playerLate(firstName, lastName, minutesLate, jsonData) { // TODO: Add t
 function displayRawData() {
     document.write(localStorage.getItem(model.LOCAL_STORAGE_NAME))
 }
+
+function chargePlayers(gameFee, jsonData) {
+    let teamA = h.currentGame(jsonData).teamA
+    let teamB = h.currentGame(jsonData).teamB
+    let players = teamA.concat(teamB)
+    players.forEach(function(player) {
+        let first = player.split(' ')[0]
+        let last = player.split(' ')[1]
+        model.findPlayerByName(first, last, jsonData).moniesOwed += gameFee
+    })
+    h.currentGame(jsonData)
+}
