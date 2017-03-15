@@ -96,3 +96,52 @@ export default {
     }
 }
 
+// Data storage format:
+// helper.jsonData = {
+//   "players": [      // array of objects, so can iterate through the array of objects
+//     {
+//       "created": 1476284285984,
+//       "firstName": "Tim",
+//       "lastName": "Handy",
+//       "email": "tim@tim.com",
+//       "active": true,
+//       "skillLevel": 2,
+//       "moniesOwed": 10,
+//     "leagueScore": 0,
+//       "leagueGoalsScored": 5
+//     },
+//   ],
+//   "games": [
+//     {
+//       "date": "Wed Oct 12 2016 15:58:05 GMT+0100 (BST)",
+//       "teamA": [
+//         "Jane Doe",
+//         "David Beckham",
+//         "Leah Andrews",
+//         "Tim Handy",
+//         "Diego Maradonna",
+//         "Misako Cedeira"
+//       ],
+//       "teamB": [
+//         "Chris Rollins",
+//         "John Doe",
+//         "Joe Bloggs",
+//         "Jade Andrews",
+//         "Karl Cedeira"
+//       ],
+//       "teamAScore": 2,
+//       "teamBScore": 1,
+//       "scorers": [
+//         "Dave Jones",
+//         "Jade Andrews",
+//         "Jade Andrews",
+//         "Karl Cedeira",
+//         "Tim Handy",
+//         "Tim Handy",
+//         "Tim Handy",
+//         "Chris Rollins"
+//       ],
+//       "endTime": null
+//     }
+//   ]
+// }

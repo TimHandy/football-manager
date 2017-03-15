@@ -20,45 +20,9 @@ let $ = require('jquery')
 
 import * as h from './helpers'
 import model from './model'
+import controller from './controller'
+import * as player from './player'
 
-
-/* ====== Controller ====== */
-
-let controller = {
-    init: function() {
-        // controller.init() should set up everything... this should be run at the end of this file as soon as the page is visited.
-    },
-
-    createNewPlayer: function(firstName, lastName, email, skillLevel) {
-        model.addNewPlayer(firstName, lastName, email, skillLevel)
-        $('.intro-para').addClass('hidden')
-    },
-
-    deleteAllData: function() {
-        model.deleteAllData()
-        location.reload()  // QUESTION: is this the best way to reload the page?
-    }, 
-    deleteCurrentGame: function() {
-        model.deleteCurrentGame()
-        location.reload()
-    }
-}
-
-
-/* ====== View ====== */
-
-let view = {
-    init: function() {
-
-    },
-    render: function() {
-
-    },   
-    displayRawData: function() {
-        document.write(localStorage.getItem(model.LOCAL_STORAGE_NAME))
-    }
-        
-}
 
 
 let teamA   // this is bad... how to remove these global vars?
@@ -101,56 +65,7 @@ function toggleNewPlayer() { // Show the new player form
     $('#back-button').removeClass('hidden')
 }
 
-function createNewPlayerFromForm() {
-    $('#back-button').removeClass('hidden')
 
-    let form = document.getElementById('new-player')
-    let firstName = h.capitalizeFirstLetter(form.fname.value.trim().split(' ').join(''))
-    let lastName = h.capitalizeFirstLetter(form.lname.value.trim().split(' ').join(''))
-    let email = form.email.value.toLowerCase()
-    let skillLevel = parseInt(form.skill.value)
-    if (firstName === 'Firstname' || firstName === '') {
-        let msg = 'First Name is required'
-        $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden') // TODO: lots of code to DRY up.
-        return
-    } else if (lastName === 'Lastname' || lastName === '') {
-        let msg = 'Last Name is required'
-        $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden')
-        return
-    } else if (fullNameExists(firstName, lastName)) {
-        let msg = 'Player name already exists'
-        $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden')
-    } else if (email === 'email' || emailExists(email) || !validateEmail(email || email === '')) {
-        let msg = 'A valid email address is required. Email must not be a duplicate.'
-        $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden')
-        return
-    } else if (skillLevel === 'Skill level (1-3)' || !(skillLevel > 0 && skillLevel < 4)) {
-        let msg = 'Skill level is required: 1-3'
-        $('#user-input-error').html('<h3>' + msg + '</h3>').removeClass('hidden')
-        return
-    } else {
-        controller.createNewPlayer(firstName, lastName, email, skillLevel)
-        $('#user-input-error').addClass('hidden')
-        $('#user-input-error').html('<h3>' + 'Player added successfully' + '</h3>').removeClass('hidden')
-    }
-
-    // FIXME: When click in the form fields the contents should highlight select all to allow overwrite. jquery onclick? onactive?
-}
-
-function emailExists(email) {       // QUESTION: helper function; keep this in a module? or close by to where it's used?
-    return model.jsonData.players.some(player => player.email === email)
-}
-
-function fullNameExists(firstName, lastName) {
-    return model.jsonData.players.some(player => player.firstName === firstName && player.lastName === lastName)
-}
-
-function validateEmail(email) { // quick & dirty regex email validation
-    let regex = /^(([^<>()\[\]\\., :\s@"]+(\.[^<>()\[\]\\., :\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-    return regex.test(email)
-}
-
-// TODO: need GUI to be able to add moniesOwed to player. Maybe in the edit page?
 
 // QUESTION: MVC? Move all functions into respective sections... for Model, View, and Controller? Might make it easier to understand what's going on?
 
@@ -551,7 +466,7 @@ $('.input-lg').focus(function() {
 })
 
 $('#new-player-submit-button').click(function() {
-    createNewPlayerFromForm()
+    player.createNewPlayerFromForm()
 })
 
 $('#select-players-button').click(function() {
@@ -608,61 +523,6 @@ $('#export-raw-data').click(function() {
 // TODO: allow adding a player once game is in progress. late players? maybe a dropdown of remaining unchosen players displayed whilst game is in progress.
 // TODO: add some font awesome icons to buttons
 
-// Data storage format:
-// helper.jsonData = {
-//   "players": [      // array of objects, so can iterate through the array of objects
-//     {
-//       "created": 1476284285984,
-//       "firstName": "Tim",
-//       "lastName": "Handy",
-//       "email": "tim@tim.com",
-//       "active": true,
-//       "skillLevel": 2,
-//       "moniesOwed": 10,
-//     "leagueScore": 0,
-//       "leagueGoalsScored": 5
-//     },
-//   ],
-//   "games": [
-//     {
-//       "date": "Wed Oct 12 2016 15:58:05 GMT+0100 (BST)",
-//       "teamA": [
-//         "Jane Doe",
-//         "David Beckham",
-//         "Leah Andrews",
-//         "Tim Handy",
-//         "Diego Maradonna",
-//         "Misako Cedeira"
-//       ],
-//       "teamB": [
-//         "Chris Rollins",
-//         "John Doe",
-//         "Joe Bloggs",
-//         "Jade Andrews",
-//         "Karl Cedeira"
-//       ],
-//       "teamAScore": 2,
-//       "teamBScore": 1,
-//       "scorers": [
-//         "Dave Jones",
-//         "Jade Andrews",
-//         "Jade Andrews",
-//         "Karl Cedeira",
-//         "Tim Handy",
-//         "Tim Handy",
-//         "Tim Handy",
-//         "Chris Rollins"
-//       ],
-//       "endTime": null
-//     }
-//   ]
-// }
 
 
-// learn testing: mocha
-//
-// don't do assertion libraries (eg. chai) yet!
-//
-// use the node.js built in assert library. require asserts.
-//
-// testing math.random. pass in a seed value. google seeded random generator.
+
