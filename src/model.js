@@ -2,7 +2,7 @@
 /* ====== Model ====== */
 
 
-export const model = {
+export default {
     LOCAL_STORAGE_NAME: 'footballData',
     jsonData: {},
     GAME_FEE: 2, // £
@@ -40,10 +40,10 @@ export const model = {
 
     // Retrieve data from localStorage
     getData: function(callback) {   
-        const str = localStorage.getItem(model.LOCAL_STORAGE_NAME)
-        model.jsonData = JSON.parse(str)
-        if (!model.jsonData) {
-            model.jsonData = {
+        const str = localStorage.getItem(this.LOCAL_STORAGE_NAME)
+        this.jsonData = JSON.parse(str)
+        if (!this.jsonData) {
+            this.jsonData = {
                 players: [],
                 games: []
             }
@@ -86,8 +86,8 @@ export const model = {
 
     // TODO: appears to be a crossover of responsibility between this function and newPlayerForm ? should these be merged? But then I couldn't call createNewPlayer() manually it would need to pull the data from the form. Where should the form validation go? (It currently goes on the createNewPlayerFromForm). MVC pattern: keep the controller logic away from the model logic in separate functions?
 
-        model.jsonData.players.push(obj)
-        model.saveData(model.jsonData)
+        this.jsonData.players.push(obj)
+        this.saveData(this.jsonData)
     },
 
     findPlayerByName: function(firstName, lastName, jsonData) {
