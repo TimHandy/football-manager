@@ -16,6 +16,14 @@ export default {
     document.write(localStorage.getItem(model.LOCAL_STORAGE_NAME))
   },
 
+  toggleNewPlayer: function() { // Show the new player form
+    $('.new-player-form').removeClass('hidden')
+    $('.intro-para').addClass('hidden')
+    $('#new-player-button').addClass('hidden')
+    $('#select-players-button').addClass('hidden')
+    $('#back-button').removeClass('hidden')
+  },
+
   displayAvailablePlayers: function(players) { 
     // generate an li for each player in players
     let list = $('#select-players ul')

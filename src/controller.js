@@ -6,7 +6,7 @@ import * as h from './helpers'
 
 export default {
   init: function() {
-    // controller.init() should set up everything... this should be run at the end of this file as soon as the page is visited.
+    // controller.init() should set up everything... this should be run at the end of app.js as soon as the page is visited.
   },
 
   createNewPlayer: function(firstName, lastName, email, skillLevel) {
