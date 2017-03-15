@@ -9,7 +9,7 @@ module.exports = {
 
     // define output points
     output: {
-        path: path.join(__dirname, 'docs'),
+        path: path.join(__dirname, 'dist'),
         filename: 'bundle.js'		
     },
     
