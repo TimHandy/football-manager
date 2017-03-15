@@ -31,6 +31,7 @@ export function back() { // used for back-button. Should this be better named?
 }
 
 export function consoleLogDb(jsonData) {
+    console.log(jsonData)
     console.log(JSON.stringify(jsonData, null, 2))
 }
 

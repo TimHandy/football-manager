@@ -153,7 +153,10 @@ let view = {
     },
     render: function() {
 
-    }   
+    },   
+    displayRawData: function() {
+        document.write(localStorage.getItem(model.LOCAL_STORAGE_NAME))
+    }
         
 }
 
@@ -328,7 +331,7 @@ function generateTeams(chosenPlayers, callback) {
 
     while (lineUp.length > 0) {
         teamA.push(lineUp.pop())
-        teamB.push(lineUp.pop()) // TODO: does this need to be a callback so that it does it in order? Not sure why it seems to do it ok... because it's a quick operation?
+        teamB.push(lineUp.pop()) // TODO: does this need to be a callback so that it does it in order? 
     }
 
     teamB = teamB.filter(Boolean) // remove an 'undefined' from teamB if uneven number of players.
@@ -691,7 +694,12 @@ $('#generate-test-players-button').click(function() {
 
 $('#consolelog-db-button').click(function() {
     h.consoleLogDb(model.jsonData)
-    location.reload()
+    // location.reload()
+})
+
+$('#export-raw-data').click(function() {
+    view.displayRawData()
+    // location.reload()
 })
 
 
